@@ -20,7 +20,7 @@ export default function NotFoundPage() {
   const goSignup = () => navigate('/cadastro');
 
   return (
-    <main className={`${s.page} ${u.withNavOffset}`}>
+    <main className={`${s.page} ${u.withNavOffsetPadding}`}>
       <div className={`container ${s.content}`}>
         <section className={s.left}>
           <p className={s.code} aria-hidden="true">404</p>
