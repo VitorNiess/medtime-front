@@ -20,7 +20,6 @@ import { Link } from 'react-router-dom';
 function Footer() {
   return (
     <footer className={s.footer}>
-      <FooterSkyline height={100} speed={20000} density="high" cars={4} theme="brand" />
 
       <div className={`${u.containerFull} ${s.inner}`}>
         {/* Brand */}

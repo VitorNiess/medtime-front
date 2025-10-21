@@ -24,7 +24,7 @@ function Navbar() {
   const { isAuthenticated, logout, busy, user } = useAuth();
 
   function handleSignUp() {
-    navigate('/cadastro'); // ou '/signup' conforme suas rotas
+    navigate('/cadastro');
   }
 
   function handleSignIn() {
@@ -37,7 +37,7 @@ function Navbar() {
 
   async function handleSignOut() {
     await logout();
-    navigate('/'); // ajuste se quiser mandar para /login
+    navigate('/');
   }
 
   useEffect(() => {

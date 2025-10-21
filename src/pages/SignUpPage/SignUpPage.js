@@ -74,7 +74,7 @@ export default function SignUpPage() {
   }
 
   return (
-    <main className={`${s.page} ${u.withNavOffset}`}>
+    <main className={`${s.page} ${u.withNavOffsetPadding}`}>
       <div className={`container ${s.content}`}>
         <section className={s.left}>
           <h1 className={`${t.titleLg} ${s.title}`}>Crie sua conta</h1>

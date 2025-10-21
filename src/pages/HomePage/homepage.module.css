@@ -89,7 +89,7 @@
   flex-wrap: wrap;
   gap: .9rem 1.4rem;
   padding: 0;
-  margin: .75rem 0 0 0;
+  margin: var(--space-9) 0 0 0;
 }
 .badge {
   display: inline-flex;

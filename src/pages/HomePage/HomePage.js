@@ -16,7 +16,7 @@ import s from './homepage.module.css';
 
 function HomePage() {
   return (
-    <main className={`${s.home} ${u.withNavOffset}`}>
+    <main className={`${s.home} ${u.withNavOffsetPadding}`}>
       {/* Hero */}
       <div className={`container ${s.content}`}>
         <div className={s.left}>
@@ -28,17 +28,9 @@ function HomePage() {
             Encontre médicos, especializações e unidades em segundos.
           </p>
 
-          <div className={s.quickActions} role="search">
-            <input
-              className={s.searchInput}
-              type="text"
-              placeholder="Busque por especialidade, médico ou unidade…"
-              aria-label="Buscar especialidade, médico ou unidade"
-            />
-            <button className={`${btn.btn} ${btn.btnPrimary} ${s.cta}`}>
-              Agendar agora
-            </button>
-          </div>
+          <button className={`${btn.btn} ${btn.btnPrimary} ${s.cta}`}>
+            Agendar agora
+          </button>
 
           <ul className={s.badges} aria-label="Diferenciais do MedTime">
             <li className={s.badge}>

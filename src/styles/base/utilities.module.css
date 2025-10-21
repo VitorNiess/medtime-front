@@ -24,10 +24,25 @@
 
 /* espaço para navbar */
 .withNavOffset {
+  margin-top: var(--nav-h);
+}
+
+.withNavOffsetPadding {
   padding-top: var(--nav-h);
 }
 
 .mainWithNavOffset {
   min-height: 100dvh;
-  padding-top: var(--nav-h);
+  margin-top: var(--nav-h);
+}
+
+.appShell {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.mainGrow {
+  flex: 1;
+  display: block;
 }

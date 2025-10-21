@@ -74,7 +74,7 @@ export default function LoginPage() {
   }
 
   return (
-    <main className={`${s.page} ${u.withNavOffset}`}>
+    <main className={`${s.page} ${u.withNavOffsetPadding}`}>
       <div className={`container ${s.content}`}>
         {/* Lado esquerdo (mensagem + ilustração) */}
         <section className={s.left}>

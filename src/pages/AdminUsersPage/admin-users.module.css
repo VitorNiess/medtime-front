@@ -1,0 +1,41 @@
+.page { 
+  padding: var(--space-6) 0 var(--space-8);
+  min-height: 50rem;
+}
+
+.header {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--space-4); margin-bottom: var(--space-4);
+}
+.headerActions { display: flex; gap: .5rem; flex-wrap: wrap; }
+
+.sub { margin: .25rem 0 0 0; color: var(--color-muted); }
+
+.error {
+  background: color-mix(in oklab, var(--color-danger), #fff 85%);
+  border: 1px solid color-mix(in oklab, var(--color-danger), #fff 60%);
+  color: color-mix(in oklab, var(--color-danger), #000 20%);
+  padding: .75rem 1rem;
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
+}
+
+.role {
+  font-weight: 700;
+  text-transform: capitalize;
+  padding: .25rem .5rem; border-radius: 999px;
+  background: #fff; border: 1px solid var(--color-border);
+}
+.role--usuario { color: var(--color-text); }
+.role--funcionario { color: #3A7CA5; border-color: color-mix(in oklab, #3A7CA5, #fff 60%); }
+.role--medico { color: var(--color-primary); border-color: color-mix(in oklab, var(--color-primary), #fff 60%); }
+.role--administrador { color: var(--color-accent); border-color: color-mix(in oklab, var(--color-accent), #fff 60%); }
+
+.modalActions { display: flex; gap: .5rem; justify-content: flex-end; margin-top: 1rem; }
+
+/* botões pequenos dentro da tabela */
+.sm { padding: .35rem .6rem; font-size: .9rem; border-radius: var(--radius-sm); }
+
+@media (max-width: 760px) {
+  .header { flex-direction: column; align-items: flex-start; }
+}
