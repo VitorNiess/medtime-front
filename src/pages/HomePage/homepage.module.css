@@ -1,0 +1,219 @@
+/* Wrapper da Home: gradient + centralização vertical */
+.home {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: linear-gradient(
+    to bottom right,
+    white,
+    var(--color-bg),
+    var(--color-support),
+    var(--color-primary),
+    #3A7CA5
+  );
+  padding-bottom: 10rem;
+}
+
+/* Miolo: usa o container global + ajustes locais */
+.content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  padding-top: clamp(1rem, 3vw, 2rem);
+}
+
+/* Coluna esquerda (texto + CTA) */
+.left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+/* Só overrides de cor/margem — a base vem do typography.module.css */
+.title {
+  color: #002D4C;
+  line-height: 1.2;
+  margin: 0 0 1rem 0;
+}
+
+/* Base de texto vem de t.textBase; aqui controlamos tamanho/lar */
+.subtitle {
+  font-size: 1.2rem;
+  color: var(--color-text);
+  max-width: 40ch;
+  margin: 0;
+  text-align: left;
+}
+
+/* Ações rápidas: input + CTA */
+.quickActions {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: .75rem;
+  margin-top: 1.25rem;
+  width: min(560px, 100%);
+}
+
+.searchInput {
+  appearance: none;
+  width: 100%;
+  padding: .9rem 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--color-border, #e6e6e6);
+  background: #fff;
+  color: var(--color-text);
+  font-size: 1rem;
+  outline: none;
+  box-shadow: 0 1px 0 rgba(0,0,0,.02);
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+.searchInput::placeholder { color: color-mix(in oklab, var(--color-text), #fff 60%); }
+.searchInput:focus {
+  border-color: color-mix(in oklab, var(--color-primary), #fff 30%);
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--color-primary), #fff 80%);
+}
+
+/* CTA usa o botão genérico; aqui só largura local */
+.cta {
+  padding-inline: 1.4rem;
+}
+
+/* Badges (diferenciais) */
+.badges {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .9rem 1.4rem;
+  padding: 0;
+  margin: .75rem 0 0 0;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  color: var(--color-text);
+  font-weight: 600;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,.06);
+  border-radius: 999px;
+  padding: .5rem .75rem;
+  box-shadow: 0 1px 0 rgba(0,0,0,.02);
+}
+.badgeIcon { font-size: 1.15rem; color: var(--color-primary); }
+
+/* Coluna direita (imagem) */
+.right {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.heroImage {
+  max-width: 80%;
+  height: auto;
+  filter: drop-shadow(0 12px 30px rgba(0,0,0,.12));
+}
+
+/* ===== Seções extras ===== */
+.extras {
+  width: 100%;
+  padding: clamp(1.5rem, 3vw, 2rem) 0 clamp(2.5rem, 5vw, 4rem);
+}
+
+/* Benefícios */
+.features {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.featureCard {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,.06);
+  border-radius: 16px;
+  padding: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,.05);
+  display: grid;
+  align-content: start;
+  gap: .5rem;
+  min-height: 130px;
+}
+.featureIconWrap {
+  display: grid;
+  place-items: center;
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--color-primary), #fff 70%);
+  color: var(--color-primary);
+  font-size: 1.2rem;
+}
+.featureText {
+  margin: 0;
+  color: color-mix(in oklab, var(--color-text), #000 6%);
+}
+
+/* Passo a passo */
+.steps {
+  display: grid;
+  grid-auto-flow: column;
+  align-items: center;
+  gap: .75rem;
+  margin-top: 1.75rem;
+  padding: .75rem 1rem;
+  border-radius: 14px;
+  background: rgba(255,255,255,.75);
+  border: 1px solid rgba(0,0,0,.06);
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+}
+.step {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: .6rem;
+}
+.stepNum {
+  width: 28px; height: 28px;
+  border-radius: 999px;
+  display: grid; place-items: center;
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 700;
+  font-size: .95rem;
+}
+.stepTitle {
+  margin: 0;
+  font-weight: 700;
+  color: #002D4C;
+}
+.stepText {
+  margin: 0;
+  color: color-mix(in oklab, var(--color-text), #000 8%);
+  font-size: .95rem;
+}
+.stepArrow {
+  font-size: 1.2rem;
+  color: var(--color-primary);
+  opacity: .9;
+}
+
+/* Responsivo */
+@media (max-width: 1100px) {
+  .features { grid-template-columns: 1fr; }
+  .steps { grid-auto-flow: row; }
+  .stepArrow { display: none; }
+}
+
+@media (max-width: 960px) {
+  .content {
+    flex-direction: column-reverse;
+    text-align: left;
+  }
+  .left, .right { width: 100%; }
+  .heroImage { max-width: 100%; }
+  .quickActions { width: 100%; grid-template-columns: 1fr; }
+}

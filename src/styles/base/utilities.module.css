@@ -1,0 +1,33 @@
+/* utils */
+.containerFull { width: 100%; box-sizing: border-box; }
+
+.row { display: flex; }
+
+.col { display: flex; flex-direction: column; }
+
+.between { justify-content: space-between; }
+
+.itemsStart { align-items: flex-start; }
+
+.itemsCenter { align-items: center; }
+
+.gapXs { gap: .4rem; }
+
+.gapSm { gap: .75rem; }
+
+.pxLg { padding-left: 3rem; padding-right: 3rem; }
+
+.pyLg { padding-top: 2rem; padding-bottom: 2rem; }
+
+/* texto claro sobre fundo escuro */
+.onDark { color: #fefcf9; }
+
+/* espaço para navbar */
+.withNavOffset {
+  padding-top: var(--nav-h);
+}
+
+.mainWithNavOffset {
+  min-height: 100dvh;
+  padding-top: var(--nav-h);
+}

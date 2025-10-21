@@ -1,0 +1,12 @@
+.link {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+.link:hover { color: var(--color-primary-hover); text-decoration: underline; }
+
+.linkOnDark {
+  color: #fefcf9;
+  text-decoration: none;
+}
+.linkOnDark:hover { text-decoration: underline; }

@@ -1,0 +1,34 @@
+.wrap {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  aspect-ratio: 5 / 3;
+  margin-top: var(--space-3);
+}
+
+.svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  /* fundo transparente por padrão → herda o background do pai */
+  filter: drop-shadow(0 8px 20px rgba(0,0,0,.10));
+  will-change: transform;
+}
+
+.float {
+  animation-name: clinic-float-y;
+  animation-duration: var(--period, 6000ms);
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes clinic-float-y {
+  0%   { transform: translateY(0); }
+  50%  { transform: translateY(var(--amp, 10px)); }
+  100% { transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .svg { filter: none; }
+  .float { animation: none !important; }
+}

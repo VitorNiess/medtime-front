@@ -1,0 +1,54 @@
+/* =========================================
+   Layout e semântica de formulário
+========================================= */
+
+.form {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.formRow {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: 1fr 1fr;
+}
+@media (max-width: 960px) { .formRow { grid-template-columns: 1fr; } }
+
+.group { display: grid; gap: .5rem; }
+
+.label {
+  font-weight: 600;
+  font-size: .95rem;
+  color: var(--color-text);
+}
+
+.helpRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: .75rem;
+}
+.hint { color: #6B7280; font-size: .9rem; }
+.error { color: #D64550; font-size: .9rem; }
+.success { color: #2E7D6D; font-size: .9rem; }
+
+/* Campo em estado inválido (wrapper) */
+.isInvalid .label { color: #D64550; }
+
+/* Linha de ações do formulário (ex.: botões) */
+.actions {
+  display: flex;
+  gap: .75rem;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: var(--space-2);
+}
+
+.warn { color: #F0B429; font-size: .9rem; }
+.msgRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+}
+.count { color: #6B7280; font-size: .85rem; }

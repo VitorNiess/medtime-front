@@ -1,0 +1,372 @@
+/* Base para input, select e textarea */
+.input,
+.textarea,
+.select {
+  width: 100%;
+  appearance: none;
+  background: #fff;
+  color: var(--color-text);
+  font: inherit;
+
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+
+  padding: .8rem 1rem;
+  line-height: 1.4;
+
+  transition: border-color .2s var(--ease),
+              box-shadow .2s var(--ease),
+              background-color .2s var(--ease),
+              transform .2s var(--ease);
+}
+
+/* Tamanhos */
+.sm { padding: .55rem .75rem; border-radius: 10px; font-size: .95rem; }
+.lg { padding: 1rem 1.2rem; border-radius: 14px; font-size: 1.05rem; }
+
+/* Placeholder mais suave */
+.input::placeholder,
+.textarea::placeholder { color: #9CA3AF; }
+
+/* Hover */
+.input:hover,
+.textarea:hover,
+.select:hover {
+  border-color: color-mix(in oklab, var(--color-primary), var(--color-border) 70%);
+}
+
+/* Focus */
+.input:focus,
+.textarea:focus,
+.select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--color-primary), white 82%);
+  background: #fff;
+}
+
+/* Disabled / Readonly */
+.input:disabled,
+.textarea:disabled,
+.select:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+  background: #f7f7f7;
+}
+.input[readonly],
+.textarea[readonly] {
+  background: #fafafa;
+  color: #6b7280;
+}
+
+/* Estados: erro/sucesso/aviso */
+.invalid {
+  border-color: #D64550 !important;
+  box-shadow: 0 0 0 4px color-mix(in oklab, #D64550, white 82%) !important;
+}
+.valid {
+  border-color: #2E7D6D !important;
+  box-shadow: 0 0 0 4px color-mix(in oklab, #2E7D6D, white 85%) !important;
+}
+.warning {
+  border-color: #F0B429 !important;
+  box-shadow: 0 0 0 4px color-mix(in oklab, #F0B429, white 85%) !important;
+}
+
+/* =========================================
+   Campo com ícones / prefixo / sufixo
+========================================= */
+.inputWrap {
+  position: relative;
+  display: grid;
+}
+
+/* ícones/prefixos */
+.iconLeft,
+.prefix {
+  position: absolute;
+  inset-inline-start: .8rem;
+  inset-block: 0;
+  display: grid; place-items: center;
+  color: #6B7280;
+  pointer-events: none;
+}
+.iconRight,
+.suffix {
+  position: absolute;
+  inset-inline-end: .6rem;
+  inset-block: 0;
+  display: grid; place-items: center;
+  color: #6B7280;
+}
+
+/* quando usar ícones/prefix/suffix, adicione estas classes ao input */
+.withIconLeft  { padding-inline-start: 2.4rem; }
+.withIconRight { padding-inline-end: 2.4rem; }
+.withPrefix    { padding-inline-start: 2.8rem; }
+.withSuffix    { padding-inline-end: 2.8rem; }
+
+/* Botão acionável do lado direito (ex.: mostrar senha) */
+.affixButton {
+  position: absolute;
+  inset-inline-end: .4rem;
+  inset-block: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  padding: .35rem .5rem;
+  border-radius: 8px;
+  transition: background-color .2s var(--ease), transform .2s var(--ease);
+}
+.affixButton:hover { background: #f3f4f6; transform: translateY(-50%) scale(1.03); }
+
+/* =========================================
+   Floating Label (rótulo flutuante)
+========================================= */
+.float {
+  position: relative;
+  display: grid;
+}
+.float input,
+.float textarea,
+.float select { padding-top: 1.25rem; }
+.labelFloat {
+  position: absolute;
+  left: 1rem;
+  top: .75rem;
+  font-size: .95rem;
+  color: #6B7280;
+  pointer-events: none;
+  transition: transform .18s var(--ease), color .18s var(--ease), font-size .18s var(--ease), top .18s var(--ease);
+  background: #fff;
+  padding: 0 .25rem;
+}
+
+/* quando tem valor/foco, levanta o label */
+.float input:not(:placeholder-shown) ~ .labelFloat,
+.float textarea:not(:placeholder-shown) ~ .labelFloat,
+.float select:focus ~ .labelFloat,
+.float input:focus ~ .labelFloat,
+.float textarea:focus ~ .labelFloat {
+  top: -.55rem;
+  transform: translateY(0);
+  font-size: .8rem;
+  color: var(--color-primary);
+}
+
+/* =========================================
+   Select com seta custom
+========================================= */
+.selectWrap { position: relative; }
+.select {
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--color-text) 50%),
+    linear-gradient(135deg, var(--color-text) 50%, transparent 50%),
+    linear-gradient(to right, transparent, transparent);
+  background-position:
+    calc(100% - 20px) calc(50% - 2px),
+    calc(100% - 15px) calc(50% - 2px),
+    100% 0;
+  background-size:
+    6px 6px,
+    6px 6px,
+    2.5rem 100%;
+  background-repeat: no-repeat;
+  padding-right: 2.5rem;
+}
+
+/* =========================================
+   Textarea com contador opcional
+========================================= */
+.counter {
+  margin-top: .35rem;
+  font-size: .85rem;
+  color: #6B7280;
+  text-align: right;
+}
+
+/* =========================================
+   Mensagens de campo
+========================================= */
+.hint   { color: #6B7280; font-size: .9rem; }
+.error  { color: #D64550; font-size: .9rem; }
+.success{ color: #2E7D6D; font-size: .9rem; }
+
+/* =========================================
+   Checkbox com check verde
+========================================= */
+.checkRow {
+  display: inline-flex;
+  align-items: center;
+  gap: .6rem;
+  line-height: 1;
+}
+
+.checkbox {
+  /* controles */
+  --chk-size: 18px;      /* tamanho da caixa */
+  --tick-w: 9px;        /* largura do ✓ */
+  --tick-h: 18px;         /* altura do ✓ */
+  --tick-thick: 4px;     /* espessura do traço do ✓ */
+  --tick-out: 0px;       /* quanto o ✓ passa pra fora (px) */
+
+  width: var(--chk-size);
+  height: var(--chk-size);
+  appearance: none;
+  margin: 0;
+  box-sizing: border-box;
+  border: 1.5px solid var(--color-border);
+  border-radius: 6px;
+  background: #fff;
+
+  display: inline-grid;
+  place-items: center;
+  vertical-align: middle;
+  position: relative;
+  overflow: visible;
+  transition:
+    border-color .2s var(--ease),
+    background-color .2s var(--ease),
+    box-shadow .2s var(--ease);
+}
+
+.checkbox:focus-visible {
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--color-primary), white 80%);
+}
+
+.checkbox:checked { border-color: var(--color-primary); }
+
+/* ✓ grande e ligeiramente para fora (direita/baixo) */
+.checkbox::after {
+  content: "";
+  position: absolute;
+
+  width: var(--tick-w);
+  height: var(--tick-h);
+  border-right: var(--tick-thick) solid var(--color-primary);
+  border-bottom: var(--tick-thick) solid var(--color-primary);
+
+  /* centralização fina + leve subida visual */
+  top: 0.2rem;
+  transform: translate(-46%, -60%) rotate(45deg) scale(0);
+  transform-origin: 0% 100%;
+
+  opacity: 0;
+  transition: transform .22s var(--ease), opacity .15s var(--ease);
+}
+
+.checkbox:checked::after {
+  opacity: 1;
+  transform: translate(-46%, -60%) rotate(45deg) scale(1);
+}
+
+/* opção: versão preenchida */
+.checkbox.isFilled:checked {
+  background: var(--color-primary);
+}
+.checkbox.isFilled:checked::after {
+  border-color: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .checkbox::after,
+  .checkbox:checked::after { transition: none; }
+}
+
+/* Radio */
+.radio { border-radius: 999px; }
+.radio:checked {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+.radio:checked::after {
+  content: "";
+  width: 8px; height: 8px; border-radius: 999px;
+  background: #fff;
+}
+
+/* =========================================
+   Switch (toggle)
+========================================= */
+.switch {
+  --h: 24px;
+  --w: 44px;
+
+  position: relative;
+  width: var(--w);
+  height: var(--h);
+  background: #e5e7eb;
+  border-radius: var(--h);
+  transition: background-color .2s var(--ease);
+  cursor: pointer;
+}
+.switch input { display: none; }
+.knob {
+  position: absolute;
+  top: 2px; left: 2px;
+  width: calc(var(--h) - 4px);
+  height: calc(var(--h) - 4px);
+  background: #fff;
+  border-radius: 999px;
+  box-shadow: var(--shadow-sm);
+  transition: transform .2s var(--ease);
+}
+.switch:has(input:checked) { background: var(--color-primary); }
+.switch:has(input:checked) .knob { transform: translateX(calc(var(--w) - var(--h))); }
+
+/* =========================================
+   Range (slider)
+========================================= */
+.range {
+  width: 100%;
+  appearance: none;
+  background: transparent;
+}
+.range:focus { outline: none; }
+.range::-webkit-slider-runnable-track {
+  height: 6px; border-radius: 999px;
+  background: linear-gradient(to right, var(--color-primary), var(--color-support));
+}
+.range::-webkit-slider-thumb {
+  appearance: none; margin-top: -6px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #fff; border: 2px solid var(--color-primary);
+  box-shadow: var(--shadow-sm);
+}
+.range::-moz-range-track {
+  height: 6px; border-radius: 999px;
+  background: linear-gradient(to right, var(--color-primary), var(--color-support));
+}
+.range::-moz-range-thumb {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #fff; border: 2px solid var(--color-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+/* =========================================
+   File input (custom)
+========================================= */
+.file {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: .75rem;
+
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: .75rem 1rem;
+  cursor: pointer;
+  transition: border-color .2s var(--ease), box-shadow .2s var(--ease), transform .2s var(--ease);
+}
+.file:hover { border-color: color-mix(in oklab, var(--color-primary), var(--color-border) 70%); }
+.file:focus-within { border-color: var(--color-primary); box-shadow: 0 0 0 4px color-mix(in oklab, var(--color-primary), white 82%); }
+.file input[type="file"] { display: none; }
+.fileName { color: #6B7280; font-size: .95rem; }
+.fileBtn {
+  background: var(--color-primary); color: #fff; border: 0; border-radius: 10px;
+  padding: .5rem .8rem; font-weight: 600; cursor: pointer;
+  transition: background-color .2s var(--ease), transform .2s var(--ease);
+}
+.fileBtn:hover { background: var(--color-primary-hover); transform: translateY(-1px); }

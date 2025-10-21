@@ -1,0 +1,80 @@
+/* Página de Login — coesa com a SignUp */
+.page {
+  min-height: 100dvh;
+  display: grid;
+  align-items: center;
+  background: linear-gradient(
+    to bottom right,
+    white,
+    var(--color-bg),
+    var(--color-support),
+    var(--color-primary),
+    #3A7CA5
+  );
+  padding-bottom: var(--space-7);
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+/* Lado esquerdo */
+.left {
+  display: grid;
+  align-content: center;
+  gap: var(--space-3);
+}
+
+.title { color: #002D4C; }
+.lead {
+  font-size: 1.05rem;
+  color: color-mix(in oklab, var(--color-text), black 10%);
+  max-width: 52ch;
+}
+
+/* Card */
+.card {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-6);
+  width: min(100%, 520px);
+  justify-self: end;
+}
+
+.cardHeader { margin-bottom: var(--space-4); }
+.sub {
+  color: #6B7280;
+  font-size: .95rem;
+  margin: .35rem 0 0 0;
+}
+
+/* Links inline dentro do card */
+.linkInline {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+.linkInline:hover {
+  color: var(--color-primary-hover);
+  text-decoration: underline;
+}
+
+.footerNote {
+  margin-top: var(--space-4);
+  color: #6B7280;
+  font-size: .95rem;
+  text-align: center;
+}
+
+/* Responsivo */
+@media (max-width: 1024px) {
+  .content {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+  .card { justify-self: stretch; }
+}

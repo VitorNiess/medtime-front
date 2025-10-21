@@ -1,0 +1,51 @@
+.footer {
+  width: 100%;
+  background: var(--color-primary);
+}
+
+.inner {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--space-6) var(--space-6);
+  box-sizing: border-box;
+}
+
+.logo { border-radius: var(--radius-md); max-width: 6rem; }
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+/* recebe tipografia via JSX; aqui só o que é exclusivo */
+.brandName { color: #fefcf9; margin-top: .5rem; }
+
+/* bloco da direita */
+.content {
+  width: 60%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.linksCol {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: .4rem;
+}
+
+/* recebe tipografia via JSX; aqui só cor/margem */
+.sectionTitle { color: #fefcf9; margin-bottom: 1rem; }
+
+/* estilo local fino; tipografia/cores base vêm via JSX */
+.linkItem { font-weight: 500; }
+
+/* recebe tipografia via JSX; aqui só cor/layout */
+.about { color: #fefcf9; max-width: 30rem; text-align: start; }
+
+@media (max-width: 960px) {
+  .inner { flex-direction: column; gap: var(--space-5); }
+  .content { width: 100%; gap: var(--space-6); }
+}

@@ -1,0 +1,24 @@
+/* Padrões de navegação reutilizáveis */
+.navList {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.navActions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.navItem {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  align-items: center;
+  color: var(--color-text);
+  transition: transform .2s var(--ease), color .2s var(--ease);
+}
+.navItem:hover { color: var(--color-primary-hover); transform: scale(1.02); }
+
+.navIcon { font-size: 1.4rem; line-height: 1; }

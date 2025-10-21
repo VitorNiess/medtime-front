@@ -1,0 +1,185 @@
+.wrap {
+  position: relative;
+  width: 100%;
+  height: var(--scene-h, 90px);
+  margin-top: calc(-1 * var(--scene-h, 90px)); /* cola no topo do footer (piso) */
+  pointer-events: none; /* decorativo */
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: #fff;           /* fundo branco sólido */
+  z-index: 0;
+  box-shadow: 0 -1px 0 rgba(0,0,0,.06); /* linha sutil com o conteúdo acima */
+}
+
+.svg {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ================= Temas / Cores ================= */
+.brand {
+  /* Vegetação */
+  --tree: #2E7D6D;
+  --tree-soft: #399b87;
+  --tree-soft2: #6db8a4;
+  --trunk: #6B7A6F;
+
+  /* Prédios (mini) */
+  --b-clinic: #e9f5ef;
+  --b-hospital: #e6eef9;
+  --b-pharmacy: #fff0f3;
+
+  --b-base: rgba(0,0,0,.06);
+  --b-icon: #2E7D6D;      /* cruz */
+  --b-iconH: #3A7CA5;     /* H */
+  --b-iconPill: #D18292;  /* pílula */
+
+  /* Carros (mini) */
+  --car0: #2E7D6D;
+  --car1: #3A7CA5;
+  --car2: #D18292;
+
+  /* Arbustos */
+  --bush: #8ecdb8;
+}
+
+.evening {
+  --tree: #2E7D6D;
+  --tree-soft: #3A7CA5;
+  --tree-soft2: #8fb9e6;
+  --trunk: #6B7A6F;
+
+  --b-clinic: #e6f2ee;
+  --b-hospital: #e8effb;
+  --b-pharmacy: #fae6ea;
+
+  --b-base: rgba(0,0,0,.07);
+  --b-icon: #2E7D6D;
+  --b-iconH: #3A7CA5;
+  --b-iconPill: #D18292;
+
+  --car0: #3A7CA5;
+  --car1: #A8D5BA;
+  --car2: #D18292;
+
+  --bush: #b7d4ea;
+}
+
+/* ================= Prédios ================= */
+.bClinic .bBody { fill: var(--b-clinic); }
+.bHospital .bBody { fill: var(--b-hospital); }
+.bPharmacy .bBody { fill: var(--b-pharmacy); }
+
+.bBase { fill: var(--b-base); }
+.bIcon rect { fill: currentColor; }
+.bClinic .bIcon { color: var(--b-icon); }
+.bHospital .bIcon { color: var(--b-iconH); }
+.bPharmacy .bIcon { color: var(--b-iconPill); }
+
+/* ================= Vegetação ================= */
+.trunk { fill: var(--trunk); }
+.tree { fill: var(--tree); }
+.treeSoft { fill: var(--tree-soft); opacity: .9; }
+.treeSoft2 { fill: var(--tree-soft2); opacity: .85; }
+
+.bush { fill: var(--bush); opacity: .95; }
+
+/* ================= Carros ================= */
+.front { filter: drop-shadow(0 1.5px 3px rgba(0,0,0,.18)); }
+
+.car {
+  fill: var(--car0);
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  will-change: transform;
+}
+.c0 { fill: var(--car0); }
+.c1 { fill: var(--car1); }
+.c2 { fill: var(--car2); }
+
+/* Direções base + perfis de parada */
+.ltr { animation-name: drive-ltr; }
+.rtl { animation-name: drive-rtl; }
+.car { animation-duration: var(--speed, 20000ms); }
+
+.stop1.ltr { animation-name: drive-ltr-stop1; }
+.stop2.ltr { animation-name: drive-ltr-stop2; }
+.stop3.ltr { animation-name: drive-ltr-stop3; }
+
+.stop1.rtl { animation-name: drive-rtl-stop1; }
+.stop2.rtl { animation-name: drive-rtl-stop2; }
+.stop3.rtl { animation-name: drive-rtl-stop3; }
+
+/* ===== Base: atravessar tela no piso ===== */
+@keyframes drive-ltr {
+  from { transform: translateX(-60px); }
+  to   { transform: translateX(1260px); }
+}
+@keyframes drive-rtl {
+  from { transform: translateX(1260px); }
+  to   { transform: translateX(-60px); }
+}
+
+/* ===== Paradas (percentuais) — versões mini ===== */
+/* LTR */
+@keyframes drive-ltr-stop1 {
+  0%   { transform: translateX(-60px); }
+  22%  { transform: translateX(240px); }
+  30%  { transform: translateX(240px); }
+  66%  { transform: translateX(780px); }
+  74%  { transform: translateX(780px); }
+  100% { transform: translateX(1260px); }
+}
+@keyframes drive-ltr-stop2 {
+  0%   { transform: translateX(-60px); }
+  28%  { transform: translateX(320px); }
+  36%  { transform: translateX(320px); }
+  62%  { transform: translateX(700px); }
+  70%  { transform: translateX(700px); }
+  100% { transform: translateX(1260px); }
+}
+@keyframes drive-ltr-stop3 {
+  0%   { transform: translateX(-60px); }
+  40%  { transform: translateX(480px); }
+  48%  { transform: translateX(480px); }
+  78%  { transform: translateX(940px); }
+  86%  { transform: translateX(940px); }
+  100% { transform: translateX(1260px); }
+}
+
+/* RTL */
+@keyframes drive-rtl-stop1 {
+  0%   { transform: translateX(1260px); }
+  22%  { transform: translateX(920px); }
+  30%  { transform: translateX(920px); }
+  66%  { transform: translateX(380px); }
+  74%  { transform: translateX(380px); }
+  100% { transform: translateX(-60px); }
+}
+@keyframes drive-rtl-stop2 {
+  0%   { transform: translateX(1260px); }
+  28%  { transform: translateX(840px); }
+  36%  { transform: translateX(840px); }
+  62%  { transform: translateX(460px); }
+  70%  { transform: translateX(460px); }
+  100% { transform: translateX(-60px); }
+}
+@keyframes drive-rtl-stop3 {
+  0%   { transform: translateX(1260px); }
+  40%  { transform: translateX(680px); }
+  48%  { transform: translateX(680px); }
+  78%  { transform: translateX(220px); }
+  86%  { transform: translateX(220px); }
+  100% { transform: translateX(-60px); }
+}
+
+/* A11y */
+@media (prefers-reduced-motion: reduce) {
+  .car { animation: none !important; }
+}
