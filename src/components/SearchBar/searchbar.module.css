@@ -1,0 +1,25 @@
+.root {
+  position: relative;
+}
+
+.staff {
+  --color-primary:        var(--staff-primary);
+  --color-primary-hover:  var(--staff-primary-hover);
+  --color-text:           var(--staff-text);
+  --color-border:         var(--staff-border);
+  --color-bg:             var(--staff-bg);
+}
+
+/* Ícone da lupa */
+.icon { color: var(--color-primary) !important; }
+.staff .icon { color: var(--staff-primary) !important; }
+
+.root :where(input[type="search"]) {
+  accent-color: var(--color-primary) !important;
+  caret-color: var(--color-primary) !important;
+}
+
+.staff :where(input[type="search"]) {
+  accent-color: var(--staff-primary) !important;
+  caret-color: var(--staff-primary) !important;
+}

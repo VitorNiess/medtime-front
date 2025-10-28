@@ -2,7 +2,7 @@
   width: 100%;
   max-height: 8rem;
   position: fixed;
-  inset: 0 0 auto 0;         /* top:0; left:0; right:0 */
+  inset: 0 0 auto 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -10,6 +10,14 @@
   box-sizing: border-box;
   transition: background-color .3s var(--ease), box-shadow .3s var(--ease), transform .3s var(--ease);
   z-index: var(--z-nav);
+
+  /* vars padrão da navbar */
+  --nav-primary: var(--color-primary);
+  --nav-primary-hover: var(--color-primary-hover);
+  --nav-text: var(--color-text);
+  --nav-border: var(--color-border);
+  --nav-bg-solid: #fff;
+  --nav-shadow: 0 4px 6px rgba(0,0,0,.1);
 }
 
 .transparent {
@@ -18,9 +26,9 @@
 }
 
 .solid {
-  background: #fff;
+  background: var(--nav-bg-solid);
   border-radius: 0 0 12px 12px;
-  box-shadow: 0 4px 6px rgba(0,0,0,.1);
+  box-shadow: var(--nav-shadow);
 }
 
 .logo {
@@ -31,7 +39,7 @@
 }
 
 .navGreeting {
-  color: var(--color-text);
+  color: var(--nav-text);
   opacity: .9;
   font-weight: 600;
   margin-right: .25rem;
@@ -40,6 +48,46 @@
 .links {}
 .actions {}
 
+/* ===========================
+   VARIAÇÃO STAFF
+   aplica apenas quando a rota for /clinics/*
+=========================== */
+.staff {
+  /* Reencaminha tokens globais usados pelos componentes para as cores staff */
+  --color-primary:        var(--staff-primary);
+  --color-primary-hover:  var(--staff-primary-hover);
+  --color-accent:         var(--staff-accent);
+  --color-support:        var(--staff-support);
+  --color-bg:             var(--staff-bg);
+  --color-text:           var(--staff-text);
+  --color-muted:          var(--staff-muted);
+  --color-border:         var(--staff-border);
+
+  /* Cards/superfícies se você usar estes tokens em outros lugares da navbar */
+  --color-card-bg:        var(--staff-card-bg);
+  --color-card-bg-hover:  var(--staff-card-bg-hover);
+  --color-card-border:    var(--staff-card-border);
+
+  /* Foco */
+  --focus-ring:           var(--staff-focus-ring);
+
+  /* Aparência da própria navbar sólida */
+  --nav-bg-solid: #ffffff;
+  --nav-shadow: 0 6px 14px rgba(30,90,166,.15);
+}
+
+/* Quando a navbar estiver sólida na variação staff */
+.staff.solid {
+  background: var(--nav-bg-solid);
+  box-shadow: var(--nav-shadow);
+}
+
+/* Ajuste de contraste dos itens dentro da navbar staff */
+.staff :where(a, button, span, svg) {
+  color: var(--color-text);
+}
+
+/* Responsivo */
 @media (max-width: 960px) {
   .navbar { padding: .8rem 1rem; }
   .logo { max-width: 9rem; }

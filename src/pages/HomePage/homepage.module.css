@@ -12,7 +12,7 @@
     var(--color-primary),
     #3A7CA5
   );
-  padding-bottom: 10rem;
+  position: relative;
 }
 
 /* Miolo: usa o container global + ajustes locais */
@@ -21,7 +21,7 @@
   justify-content: space-between;
   align-items: center;
   gap: 2rem;
-  padding-top: clamp(1rem, 3vw, 2rem);
+  padding-top: var(--space-10);
 }
 
 /* Coluna esquerda (texto + CTA) */
@@ -49,40 +49,24 @@
   text-align: left;
 }
 
-/* Ações rápidas: input + CTA */
-.quickActions {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: .75rem;
-  margin-top: 1.25rem;
-  width: min(560px, 100%);
-}
-
-.searchInput {
-  appearance: none;
-  width: 100%;
-  padding: .9rem 1rem;
-  border-radius: 10px;
-  border: 1px solid var(--color-border, #e6e6e6);
-  background: #fff;
-  color: var(--color-text);
-  font-size: 1rem;
-  outline: none;
-  box-shadow: 0 1px 0 rgba(0,0,0,.02);
-  transition: border-color .2s ease, box-shadow .2s ease;
-}
-.searchInput::placeholder { color: color-mix(in oklab, var(--color-text), #fff 60%); }
-.searchInput:focus {
-  border-color: color-mix(in oklab, var(--color-primary), #fff 30%);
-  box-shadow: 0 0 0 4px color-mix(in oklab, var(--color-primary), #fff 80%);
-}
-
 /* CTA usa o botão genérico; aqui só largura local */
 .cta {
   padding-inline: 1.4rem;
+  text-decoration: none;
 }
 
-/* Badges (diferenciais) */
+/* ========= Badges com borda animada ========= */
+@keyframes spinBorder {
+  to { --angle: 360deg; }
+}
+
+/* registra custom property para animação suave */
+@property --angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
 .badges {
   list-style: none;
   display: flex;
@@ -91,18 +75,37 @@
   padding: 0;
   margin: var(--space-9) 0 0 0;
 }
+
 .badge {
+  --angle: 0deg;
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: .5rem;
   color: var(--color-text);
   font-weight: 600;
-  background: #fff;
-  border: 1px solid rgba(0,0,0,.06);
+  background:
+    linear-gradient(#fff, #fff) padding-box,
+    conic-gradient(
+      from var(--angle),
+      var(--color-primary),
+      var(--color-support),
+      var(--color-accent),
+      var(--color-primary)
+    ) border-box;
+  border: 2px solid transparent; /* necessário para revelar a conic */
   border-radius: 999px;
   padding: .5rem .75rem;
   box-shadow: 0 1px 0 rgba(0,0,0,.02);
+  transition: transform var(--ts) var(--ease), box-shadow var(--ts) var(--ease);
 }
+
+.badge:hover {
+  animation: spinBorder 1.2s linear infinite;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0,0,0,.08);
+}
+
 .badgeIcon { font-size: 1.15rem; color: var(--color-primary); }
 
 /* Coluna direita (imagem) */
@@ -119,9 +122,25 @@
   filter: drop-shadow(0 12px 30px rgba(0,0,0,.12));
 }
 
+/* ===== Transição do degradê ===== */
+.sectionTransition {
+  position: relative;
+  width: 100%;
+  height: 80px;
+  margin-top: clamp(3rem, 8vw, 12rem);
+}
+
+.wave {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: var(--color-bg);
+}
+
 /* ===== Seções extras ===== */
 .extras {
   width: 100%;
+  background: var(--color-bg);
   padding: clamp(1.5rem, 3vw, 2rem) 0 clamp(2.5rem, 5vw, 4rem);
 }
 
@@ -201,19 +220,304 @@
   opacity: .9;
 }
 
+/* ======= Descoberta ======= */
+.discover {
+  width: 100%;
+  background: var(--color-bg);
+  padding: clamp(1.5rem, 4vw, 2.5rem) 0 clamp(3rem, 6vw, 4rem);
+}
+
+/* Chips */
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem .8rem;
+  margin-top: 1rem;
+}
+.chip {
+  appearance: none;
+  border: 1px solid var(--color-border);
+  background: #fff;
+  color: var(--color-text);
+  padding: .45rem .8rem;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform var(--ts) var(--ease), background var(--ts) var(--ease), border-color var(--ts) var(--ease);
+}
+.chip:hover { transform: translateY(-1px); background: color-mix(in oklab, var(--color-primary), #fff 92%); }
+.chip[aria-pressed="true"] {
+  background: color-mix(in oklab, var(--color-primary), #fff 85%);
+  border-color: color-mix(in oklab, var(--color-primary), #fff 60%);
+}
+
+/* Filtros */
+.filters {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: .8rem;
+  align-items: end;
+  margin-top: 1.25rem;
+  padding: 1rem;
+  border-radius: var(--radius-lg);
+  background: #fff;
+  border: 1px solid rgba(0,0,0,.06);
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+}
+.filterField {
+  grid-column: span 3;
+  display: grid;
+  gap: .35rem;
+}
+.filterField label {
+  font-size: .9rem;
+  color: var(--color-muted);
+}
+.filterField select {
+  width: 100%;
+  padding: .6rem .7rem;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  background: #fff;
+  color: var(--color-text);
+  font-size: .95rem;
+  outline: none;
+  transition: border-color var(--ts) var(--ease), box-shadow var(--ts) var(--ease);
+}
+.filterField select:focus {
+  border-color: color-mix(in oklab, var(--color-primary), #fff 30%);
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--color-primary), #fff 80%);
+}
+
+.filterToggles {
+  grid-column: span 6;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem 1rem;
+  align-items: center;
+}
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  font-size: .95rem;
+  color: var(--color-text);
+}
+.check input[type="checkbox"] {
+  accent-color: var(--color-primary);
+  width: 16px; height: 16px;
+}
+
+/* Cards de médicos */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.docCard {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,.06);
+  border-radius: 16px;
+  padding: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,.05);
+  display: grid;
+  gap: .75rem;
+}
+.docHeader {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem;
+  align-items: center;
+}
+.avatar {
+  width: 54px; height: 54px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  color: #08323F;
+  font-weight: 800;
+  letter-spacing: .5px;
+  box-shadow: inset 0 0 0 3px rgba(255,255,255,.7), 0 3px 10px rgba(0,0,0,.07);
+}
+.docMeta { display: grid; gap: .25rem; }
+.docName { margin: 0; font-size: 1.05rem; font-weight: 700; color: #102A43; }
+.docSpec { margin: 0; color: var(--color-muted); font-size: .92rem; }
+.docUnit { margin: 0; color: color-mix(in oklab, var(--color-text), #000 8%); font-size: .92rem; display: inline-flex; align-items: center; gap: .35rem; }
+
+.docBadges {
+  display: flex; flex-wrap: wrap; gap: .5rem;
+}
+.pill {
+  display: inline-flex; align-items: center; gap: .35rem;
+  padding: .3rem .6rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: #fff;
+  font-size: .9rem; font-weight: 600;
+}
+.pillPrice {
+  background: color-mix(in oklab, var(--color-support), #fff 70%);
+  border-color: color-mix(in oklab, var(--color-support), #000 10%);
+}
+.pillTele {
+  background: color-mix(in oklab, var(--color-primary), #fff 80%);
+  border-color: color-mix(in oklab, var(--color-primary), #000 10%);
+}
+.pillSus {
+  background: color-mix(in oklab, var(--color-accent), #fff 80%);
+  border-color: color-mix(in oklab, var(--color-accent), #000 10%);
+}
+
+.docFooter {
+  display: flex; align-items: center; justify-content: space-between; gap: .75rem;
+  margin-top: .25rem;
+}
+.nextSlot {
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .4rem .6rem; border-radius: 10px;
+  background: rgba(46,125,109,.08);
+  color: #0f3b34; font-size: .95rem;
+}
+.ctaGroup { display: inline-flex; gap: .5rem; }
+
+/* ===========================
+   Seção de referência às Clínicas (tema staff)
+=========================== */
+.clinicsPromo {
+  --color-primary:        var(--staff-primary);
+  --color-primary-hover:  var(--staff-primary-hover);
+  --color-text:           var(--staff-text);
+  --color-border:         var(--staff-border);
+
+  width: 100%;
+  background: var(--color-bg);
+  padding: clamp(1.75rem, 4vw, 3rem) 0;
+}
+
+/* Card interno com as cores staff */
+.clinicsPromoCard {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: clamp(.8rem, 2vw, 1.25rem);
+
+  background: var(--staff-card-bg);
+  border: 1px solid var(--staff-card-border);
+  border-radius: 16px;
+  box-shadow: 0 6px 16px rgba(0,0,0,.08);
+  padding: clamp(1rem, 3vw, 1.5rem);
+  position: relative;
+  overflow: clip;
+}
+
+/* filete decorativo à esquerda com gradiente azul */
+.clinicsPromoCard::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 6px;
+  background: linear-gradient(180deg, var(--staff-primary), color-mix(in oklab, var(--staff-support), #fff 10%));
+}
+
+/* título e texto */
+.clinicsPromoText h2 {
+  color: var(--staff-text);
+  margin: 0 0 .25rem 0;
+}
+.clinicsPromoText p {
+  color: color-mix(in oklab, var(--staff-text), #000 12%);
+  margin: 0;
+  max-width: 60ch;
+}
+
+/* ações: o btnPrimary já ficará azul pois remapeamos --color-primary acima */
+.clinicsPromoActions {
+  display: inline-flex;
+  gap: .6rem;
+}
+.clinicsPromoCta {
+  padding-inline: 1.1rem; /* leve ajuste local */
+}
+
+/* micro-hover: eleva o card */
+.clinicsPromoCard:hover {
+  box-shadow: 0 10px 24px rgba(30, 90, 166, .16);
+  border-color: color-mix(in oklab, var(--staff-primary), #000 10%);
+}
+
 /* Responsivo */
 @media (max-width: 1100px) {
   .features { grid-template-columns: 1fr; }
   .steps { grid-auto-flow: row; }
   .stepArrow { display: none; }
+  .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 960px) {
+  .clinicsPromoCard {
+    grid-template-columns: 1fr;
+  }
+  .clinicsPromoActions {
+    justify-self: start;
+  }
+
   .content {
     flex-direction: column-reverse;
     text-align: left;
   }
   .left, .right { width: 100%; }
   .heroImage { max-width: 100%; }
-  .quickActions { width: 100%; grid-template-columns: 1fr; }
+  .filterField { grid-column: span 6; }
+  .filterToggles { grid-column: span 12; }
+}
+
+@media (max-width: 720px) {
+  .cards { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 600px) {
+  .badges { gap: .6rem .8rem; }
+}
+
+#clinicPromo {
+  scroll-margin-top: var(--nav-offset, 96px);
+}
+
+/* ==========================
+   Destaque breve ao chegar
+========================== */
+@keyframes sectionFocusPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(0,0,0,0), 0 0 0 0 var(--focus-ring-color, transparent); }
+  22%  { box-shadow: 0 0 0 6px color-mix(in oklab, var(--focus-ring-color, var(--color-primary)), white 60%); }
+  66%  { box-shadow: 0 0 0 0  color-mix(in oklab, var(--focus-ring-color, var(--color-primary)), white 60%); }
+  100% { box-shadow: 0 0 0 0 rgba(0,0,0,0); }
+}
+
+/* classe aplicada temporariamente pelo JS
+   (tenta azul staff; se não houver, usa o primário padrão) */
+.flashFocus {
+  --focus-ring-color: var(--staff-primary, var(--color-primary));
+  animation-name: sectionFocusPulse;
+  animation-duration: 1200ms;
+  animation-timing-function: var(--ease, ease-out);
+  animation-fill-mode: both;
+  border-radius: var(--radius-lg, 16px);
+  will-change: box-shadow;
+}
+
+/* Se o highlight estiver na section, pulse também o card interno */
+.clinicsPromo.flashFocus .clinicsPromoCard {
+  animation-name: sectionFocusPulse;
+  animation-duration: 1200ms;
+  animation-timing-function: var(--ease, ease-out);
+  animation-fill-mode: both;
+  border-radius: var(--radius-lg, 16px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flashFocus,
+  .clinicsPromo.flashFocus .clinicsPromoCard {
+    animation: none;
+  }
 }

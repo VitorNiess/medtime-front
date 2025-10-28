@@ -1,0 +1,85 @@
+/* =========================================
+   Extras de formulário comuns (chips + search)
+   — Reutilizável em várias páginas
+========================================= */
+
+/* ====== Barra de pesquisa compacta ====== */
+.searchBar {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: .75rem;
+  margin-top: 1rem;
+  background: var(--color-bg);
+  padding: .6rem;
+}
+
+.searchField {
+  width: 100%;
+  position: relative;
+}
+
+.searchBtn { min-height: 44px; }
+
+/* Responsivo: empilha botão abaixo do campo */
+@media (max-width: 720px) {
+  .searchBar { grid-template-columns: 1fr; }
+}
+
+.chipSurface {
+  margin-top: 0;
+  background: var(--color-bg);
+  padding: .6rem .75rem;
+}
+
+/* ====== Chips/Seletores comuns ====== */
+.chipGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem .8rem;
+  margin-top: 1rem;
+}
+
+.chip {
+  appearance: none;
+  border: 1px solid var(--color-border);
+  background: #fff;
+  color: var(--color-text);
+  padding: .45rem .8rem;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform var(--ts) var(--ease),
+    background var(--ts) var(--ease),
+    border-color var(--ts) var(--ease),
+    box-shadow var(--ts) var(--ease);
+}
+.chip:hover {
+  transform: translateY(-1px);
+  background: color-mix(in oklab, var(--color-primary), #fff 92%);
+  box-shadow: 0 2px 6px rgba(0,0,0,.06);
+}
+.chip[aria-pressed="true"],
+.chip.isOn {
+  background: color-mix(in oklab, var(--color-primary), #fff 85%);
+  border-color: color-mix(in oklab, var(--color-primary), #fff 55%);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-primary), #fff 40%);
+}
+
+/* ====== Superfície de filtros (cartão padrão) ====== */
+.filterSurface {
+  margin-top: 1.25rem;
+  padding: 1rem;
+  border-radius: var(--radius-lg);
+  background: #fff;
+  border: 1px solid rgba(0,0,0,.06);
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+}
+
+/* Linha de toggles mais espaçada quando usada com form-layout */
+.toggleRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem 1rem;
+  align-items: center;
+}

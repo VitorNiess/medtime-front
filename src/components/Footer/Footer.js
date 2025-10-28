@@ -1,7 +1,8 @@
 import FooterSkyline from '../FooterSkyline/FooterSkyline';
 
 // Constantes
-import navItems from '../../constants/navbarLinks';
+import navItemsPublic from '../../constants/navbarLinks';
+import navItemsClin from '../../constants/navbarLinksClin';
 
 // Estilos genéricos
 import t from '../../styles/primitives/typography.module.css';
@@ -13,18 +14,27 @@ import s from './footer.module.css';
 
 // Assets
 import icon from '../../assets/iconeMedTime.png';
+import iconClin from '../../assets/iconeMedTimeClin.png';
 
 // Router
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 function Footer() {
+  const location = useLocation();
+  const isClinics = location.pathname === '/clinics' || location.pathname.startsWith('/clinics/');
+
+  const links = isClinics ? navItemsClin : navItemsPublic;
+  const iconSrc = isClinics ? iconClin : icon;
+
   return (
-    <footer className={s.footer}>
+    <footer className={`${s.footer} ${isClinics ? s.staff : ''}`}>
+      {/* Se tiver skyline e quiser variar cores depois, ele herda tokens também */}
+      {/* <FooterSkyline /> */}
 
       <div className={`${u.containerFull} ${s.inner}`}>
         {/* Brand */}
         <div className={s.brand}>
-          <img className={s.logo} src={icon} alt="MedTime" />
+          <img className={s.logo} src={iconSrc} alt="MedTime" />
           <h1 className={`${t.titleLg} ${s.brandName}`}>MedTime</h1>
         </div>
 
@@ -33,7 +43,7 @@ function Footer() {
           {/* Links úteis */}
           <div className={s.linksCol}>
             <h2 className={`${t.titleSm} ${s.sectionTitle}`}>Links úteis</h2>
-            {navItems.map((link) => (
+            {links.map((link) => (
               <Link
                 key={link.id}
                 to={link.path}

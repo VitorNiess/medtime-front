@@ -19,10 +19,8 @@
   justify-content: center;
   align-items: center;
 }
-/* recebe tipografia via JSX; aqui só o que é exclusivo */
 .brandName { color: #fefcf9; margin-top: .5rem; }
 
-/* bloco da direita */
 .content {
   width: 60%;
   display: flex;
@@ -37,16 +35,31 @@
   gap: .4rem;
 }
 
-/* recebe tipografia via JSX; aqui só cor/margem */
 .sectionTitle { color: #fefcf9; margin-bottom: 1rem; }
 
-/* estilo local fino; tipografia/cores base vêm via JSX */
 .linkItem { font-weight: 500; }
 
-/* recebe tipografia via JSX; aqui só cor/layout */
 .about { color: #fefcf9; max-width: 30rem; text-align: start; }
 
 @media (max-width: 960px) {
   .inner { flex-direction: column; gap: var(--space-5); }
   .content { width: 100%; gap: var(--space-6); }
+}
+
+/* ===========================
+   VARIAÇÃO STAFF (azul) no Footer
+=========================== */
+.staff {
+  --color-primary:        var(--staff-primary);
+  --color-primary-hover:  var(--staff-primary-hover);
+  --color-accent:         var(--staff-accent);
+  --color-support:        var(--staff-support);
+  --color-bg:             var(--staff-bg);
+  --color-text:           var(--staff-text);
+  --color-muted:          var(--staff-muted);
+  --color-border:         var(--staff-border);
+
+  --color-card-bg:        var(--staff-card-bg);
+  --color-card-bg-hover:  var(--staff-card-bg-hover);
+  --color-card-border:    var(--staff-card-border);
 }

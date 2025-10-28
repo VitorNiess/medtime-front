@@ -12,6 +12,7 @@ import styles from "./isometricClinic.module.css";
  * - people: "none" | "few" | "standard" | "crowd" (default: "standard")
  * - peopleCount: number (override fino do total de carinhas)
  * - decorative: boolean (default: true) → aria-hidden
+ * - isClinics: boolean (default: false) → usa paleta STAFF (azul)
  */
 export default function IsometricClinic({
   variant = "clinic",
@@ -22,6 +23,7 @@ export default function IsometricClinic({
   people = "standard",
   peopleCount,
   decorative = true,
+  isClinics = false,            // <<<<< NOVO
 }) {
   const wrapRef = useRef(null);
   const [reduce, setReduce] = useState(false);
@@ -62,11 +64,11 @@ export default function IsometricClinic({
     };
   }, [reduce]);
 
-  const cfg = useMemo(() => getVariantConfig(variant, theme), [variant, theme]);
+  // agora recebe staffMode (isClinics) para montar a paleta
+  const cfg = useMemo(() => getVariantConfig(variant, theme, isClinics), [variant, theme, isClinics]);
   const vb = { w: 600, h: 360 };
 
   const peoplePlan = useMemo(() => {
-    // calcula quantidade padrão por variant
     const presets = {
       minimal: 2,
       clinic: 2,
@@ -74,10 +76,10 @@ export default function IsometricClinic({
       lab: 2,
       crowd: 6,
       interior: 5,
-      warning: 0, // por padrão, sem pessoas na variação de aviso/404
+      warning: 0,
     };
     const base = presets[variant] ?? 2;
-    const mult = people === "few" ? 0.6 : people === "crowd" ? 1.8 : 1; // none tratado abaixo
+    const mult = people === "few" ? 0.6 : people === "crowd" ? 1.8 : 1;
     let total = Math.round(base * mult);
     if (people === "none") total = 0;
     if (typeof peopleCount === "number") total = peopleCount;
@@ -92,12 +94,10 @@ export default function IsometricClinic({
       aria-hidden={decorative ? "true" : undefined}
     >
       <svg className={styles.svg} viewBox={`0 0 ${vb.w} ${vb.h}`} focusable="false">
-        {/* opcional: shapes de fundo bem suaves */}
         {background === "softShapes" && (
           <SoftBackground cfg={cfg} vb={vb} />
         )}
 
-        {/* Cena */}
         {variant === "interior" ? (
           <InteriorScene cfg={cfg} vb={vb} people={peoplePlan} />
         ) : (
@@ -119,55 +119,24 @@ export default function IsometricClinic({
 function FacadeScene({ cfg, vb, variant, floatingIcons, people }) {
   return (
     <>
-      {/* sombra do prédio (no fundo) */}
       <ellipse cx="300" cy="300" rx="200" ry="22" fill="rgba(0,0,0,.08)" data-parallax="1" />
-
-      {/* bloco principal */}
       <g data-parallax="2">
-        {/* base */}
-        <polygon
-          points="160,250 300,190 460,250 320,310"
-          fill={cfg.base}
-          stroke={cfg.stroke}
-          strokeWidth="2"
-        />
-        {/* paredes */}
-        <polygon
-          points="160,250 160,200 300,140 300,190"
-          fill={cfg.leftWall}
-          stroke={cfg.stroke}
-          strokeWidth="2"
-        />
-        <polygon
-          points="300,190 300,140 460,200 460,250"
-          fill={cfg.rightWall}
-          stroke={cfg.stroke}
-          strokeWidth="2"
-        />
-        {/* telhado */}
-        <polygon
-          points="160,200 300,140 460,200 320,260"
-          fill={cfg.roof}
-          stroke={cfg.stroke}
-          strokeWidth="2"
-        />
+        <polygon points="160,250 300,190 460,250 320,310" fill={cfg.base} stroke={cfg.stroke} strokeWidth="2" />
+        <polygon points="160,250 160,200 300,140 300,190" fill={cfg.leftWall} stroke={cfg.stroke} strokeWidth="2" />
+        <polygon points="300,190 300,140 460,200 460,250" fill={cfg.rightWall} stroke={cfg.stroke} strokeWidth="2" />
+        <polygon points="160,200 300,140 460,200 320,260" fill={cfg.roof} stroke={cfg.stroke} strokeWidth="2" />
       </g>
 
-      {/* porta + degraus */}
       <g data-parallax="3">
         <rect x="260" y="215" width="40" height="60" rx="6" fill={cfg.door} />
         <rect x="252" y="275" width="56" height="8" rx="4" fill={cfg.step} />
         <rect x="246" y="283" width="68" height="8" rx="4" fill={cfg.step} />
       </g>
 
-      {/* menos janelas quando minimal; mais quando crowd */}
       <g data-parallax="3">
-        {windowsForVariant(variant, cfg).map((w, i) => (
-          <Window key={i} {...w} />
-        ))}
+        {windowsForVariant(variant, cfg).map((w, i) => <Window key={i} {...w} />)}
       </g>
 
-      {/* placa */}
       <g data-parallax="4">
         <Sign
           x={300}
@@ -175,25 +144,20 @@ function FacadeScene({ cfg, vb, variant, floatingIcons, people }) {
           fill={cfg.signBg}
           stroke={cfg.stroke}
           icon={
-            variant === "pharmacy"
-              ? "pill"
-              : variant === "lab"
-              ? "flask"
-              : variant === "warning"
-              ? "warning"
-              : "cross"
+            variant === "pharmacy" ? "pill"
+            : variant === "lab" ? "flask"
+            : variant === "warning" ? "warning"
+            : "cross"
           }
         />
       </g>
 
-      {/* pessoas nas janelas */}
       <g data-parallax="5">
         {facesForVariant(variant, people).map((p, i) => (
           <FaceWithEyes key={i} cx={p.cx} cy={p.cy} theme={cfg} small={p.small} />
         ))}
       </g>
 
-      {/* ícones flutuantes */}
       {floatingIcons && (
         <g>
           {variant === "warning" ? (
@@ -215,36 +179,25 @@ function FacadeScene({ cfg, vb, variant, floatingIcons, people }) {
 }
 
 function InteriorScene({ cfg, vb, people }) {
-  // sala de espera simples: piso, parede, recepção, cadeiras e pessoas
   return (
     <>
-      {/* piso */}
       <rect x="60" y="220" width="480" height="80" rx="12" fill="rgba(0,0,0,.05)" data-parallax="1" />
-      {/* parede */}
       <rect x="40" y="80" width="520" height="140" rx="12" fill={cfg.wall} stroke={cfg.stroke} strokeWidth="2" data-parallax="2" />
-      {/* logotipo/placa na parede */}
       <g data-parallax="3">
         <Sign x={180} y={120} fill={cfg.signBg} stroke={cfg.stroke} icon="cross" />
       </g>
-      {/* balcão recepção */}
       <g data-parallax="3">
         <rect x="320" y="150" width="180" height="60" rx="10" fill={cfg.counter} stroke={cfg.stroke} strokeWidth="2" />
-        {/* recepcionista */}
         <FaceWithEyes cx={380} cy={150} theme={cfg} />
       </g>
-      {/* fileira de cadeiras */}
       <g data-parallax="4">
-        {[0, 1, 2, 3].map((i) => (
-          <Chair key={i} x={80 + i * 52} y={200} color={cfg.chair} stroke={cfg.stroke} />
-        ))}
+        {[0, 1, 2, 3].map((i) => <Chair key={i} x={80 + i * 52} y={200} color={cfg.chair} stroke={cfg.stroke} />)}
       </g>
-      {/* pessoas sentadas (até 'people') */}
       <g data-parallax="5">
         {Array.from({ length: people }).slice(0, 4).map((_, i) => (
           <FaceWithEyes key={i} cx={80 + i * 52} cy={190} theme={cfg} small />
         ))}
       </g>
-      {/* ícones flutuantes mais discretos */}
       <g>
         <FloatingIcon kind="calendar" x={520} y={90} color={cfg.icon2} delay={300} amp={8} period={6000} />
         <FloatingIcon kind="heart" x={100} y={90} color={cfg.icon1} delay={800} amp={7} period={5600} />
@@ -253,7 +206,7 @@ function InteriorScene({ cfg, vb, people }) {
   );
 }
 
-/* =============== PARTES REUTILIZÁVEIS =============== */
+/* =============== PARTES REUTILIZÁVEIS E HELPERS =============== */
 
 function SoftBackground({ cfg, vb }) {
   return (
@@ -283,16 +236,7 @@ function Window({ x, y, w, h, c, s }) {
 function Sign({ x, y, fill, stroke, icon = "cross" }) {
   return (
     <g>
-      <rect
-        x={x - 22}
-        y={y - 22}
-        width="44"
-        height="44"
-        rx="10"
-        fill={fill}
-        stroke={stroke}
-        strokeWidth="2"
-      />
+      <rect x={x - 22} y={y - 22} width="44" height="44" rx="10" fill={fill} stroke={stroke} strokeWidth="2" />
       {icon === "cross" && (
         <g stroke="white" strokeWidth="4" strokeLinecap="round">
           <line x1={x} y1={y - 10} x2={x} y2={y + 10} />
@@ -313,13 +257,7 @@ function Sign({ x, y, fill, stroke, icon = "cross" }) {
       )}
       {icon === "warning" && (
         <g>
-          {/* triângulo de aviso */}
-          <polygon
-            points={`${x},${y - 11} ${x - 12},${y + 10} ${x + 12},${y + 10}`}
-            fill="white"
-            opacity="0.95"
-          />
-          {/* exclamação */}
+          <polygon points={`${x},${y - 11} ${x - 12},${y + 10} ${x + 12},${y + 10}`} fill="white" opacity="0.95" />
           <rect x={x - 1.8} y={y - 2} width="3.6" height="8" rx="1.5" fill={fill} />
           <circle cx={x} cy={y + 7} r="2.2" fill={fill} />
         </g>
@@ -389,11 +327,7 @@ function FloatingIcon({ kind, x, y, color, delay = 0, amp = 10, period = 6000 })
       case "warning":
         return (
           <g>
-            <polygon
-              points={`${x},${y - 14} ${x - 14},${y + 12} ${x + 14},${y + 12}`}
-              fill={color}
-              opacity="0.95"
-            />
+            <polygon points={`${x},${y - 14} ${x - 14},${y + 12} ${x + 14},${y + 12}`} fill={color} opacity="0.95" />
             <rect x={x - 2.4} y={y - 2} width="4.8" height="9" rx="2" fill="white" />
             <circle cx={x} cy={y + 9} r="2.6" fill="white" />
           </g>
@@ -435,16 +369,12 @@ function clamp(v, a, b) {
 
 function applyTransforms(rootEl, vec) {
   const { x, y } = vec;
-
-  // Parallax
   rootEl.querySelectorAll("[data-parallax]").forEach((g) => {
     const depth = Number(g.getAttribute("data-parallax")) || 1;
     const tX = (x * depth * 2).toFixed(2);
     const tY = (y * depth * 2).toFixed(2);
     g.style.transform = `translate(${tX}px, ${tY}px)`;
   });
-
-  // Pupilas
   rootEl.querySelectorAll("[data-pupil]").forEach((p) => {
     const max = 5.5;
     const tX = (x * max).toFixed(2);
@@ -453,11 +383,16 @@ function applyTransforms(rootEl, vec) {
   });
 }
 
-function getVariantConfig(variant, theme) {
-  const primary = cssVar("--color-primary", "#2E7D6D");
-  const support = cssVar("--color-support", "#A8D5BA");
-  const accent = cssVar("--color-accent", "#D18292");
-  const text = cssVar("--color-text", "#333333");
+/**
+ * Paleta por variant/theme, com suporte a modo staff (azul).
+ * Quando staff=true, lê as vars --staff-*; caso contrário, usa as vars padrão.
+ */
+function getVariantConfig(variant, theme, staff = false) {
+  // tokens base (verde) ou staff (azul)
+  const primary = staff ? cssVar("--staff-primary", "#1E5AA6") : cssVar("--color-primary", "#2E7D6D");
+  const support = staff ? cssVar("--staff-support", "#A5C9E4")   : cssVar("--color-support", "#A8D5BA");
+  const accent  = staff ? cssVar("--staff-accent",  "#63B3ED")   : cssVar("--color-accent",  "#D18292");
+  const text    = staff ? cssVar("--staff-text",    "#0F1E2E")   : cssVar("--color-text",    "#333333");
 
   // cores de aviso (amber)
   const warn = {
@@ -466,55 +401,57 @@ function getVariantConfig(variant, theme) {
     amberSoft: "#F8D07A",
   };
 
+  // temas base
   const day = {
     bgStart: "#ffffff",
     bgEnd: support,
     bgAccent: primary,
     bgAccent2: accent,
-    base: "#f3faf6",
-    roof: "#e9f5ef",
-    leftWall: "#e6f1ec",
-    rightWall: "#eef7f2",
+    base: staff ? "#EEF5FC" : "#f3faf6",
+    roof: staff ? "#E8F1FB" : "#e9f5ef",
+    leftWall: staff ? "#E6F0FA" : "#e6f1ec",
+    rightWall: staff ? "#EDF5FE" : "#eef7f2",
     door: primary,
     step: "rgba(0,0,0,.06)",
-    window: "#cfeae0",
+    window: staff ? "#D7E7FB" : "#cfeae0",
     signBg: primary,
     stroke: "rgba(0,0,0,.12)",
     face: "#fff",
     pupil: text,
-    wall: "#f7fbf9",
+    wall: staff ? "#F3F8FF" : "#f7fbf9",
     counter: "#ffffff",
-    chair: "#e8f3ee",
+    chair: staff ? "#E9F1FB" : "#e8f3ee",
     icon1: primary,
     icon2: support,
     icon3: accent,
-    // warning extras (default nulos; preenchidos no variant warning)
     iconWarn: warn.amberDeep,
     iconWarnSoft: warn.amber,
   };
+
   const evening = {
     ...day,
-    bgStart: "#fefcf9",
-    bgEnd: "#3A7CA5",
-    roof: "#e6eef6",
-    leftWall: "#e9f1fb",
-    rightWall: "#eef5ff",
-    window: "#d9e8ff",
-    wall: "#f3f7ff",
-    chair: "#e9effa",
+    bgStart: staff ? "#F7FAFD" : "#fefcf9",
+    bgEnd:   staff ? "#3A7CA5" : "#3A7CA5",
+    roof:    staff ? "#E6EEF6" : "#e6eef6",
+    leftWall: staff ? "#E9F1FB" : "#e9f1fb",
+    rightWall: staff ? "#EEF5FF" : "#eef5ff",
+    window:  staff ? "#D9E8FF" : "#d9e8ff",
+    wall:    staff ? "#F3F7FF" : "#f3f7ff",
+    chair:   staff ? "#E9EFFA" : "#e9effa",
   };
+
   const base = theme === "evening" ? evening : day;
 
   if (variant === "pharmacy") {
     return { ...base, signBg: accent, icon1: accent, icon2: primary, icon3: support };
   }
   if (variant === "lab") {
-    return { ...base, signBg: "#3A7CA5", icon1: "#3A7CA5", icon2: support, icon3: accent };
+    const labBlue = staff ? primary : "#3A7CA5";
+    return { ...base, signBg: labBlue, icon1: labBlue, icon2: support, icon3: accent };
   }
   if (variant === "warning") {
     return {
       ...base,
-      // dar um leve tom amarelado ao fundo para diferenciar na 404
       bgEnd: "#fff7e1",
       base: "#fffaf0",
       leftWall: "#fff6e0",
@@ -526,8 +463,7 @@ function getVariantConfig(variant, theme) {
       iconWarnSoft: warn.amber,
     };
   }
-  // minimal/crowd usam as cores da clínica
-  return base;
+  return base; // clinic, minimal, crowd, interior
 }
 
 function cssVar(name, fallback) {
@@ -537,7 +473,6 @@ function cssVar(name, fallback) {
 }
 
 function windowsForVariant(variant, cfg) {
-  // posições base
   const base = [
     { x: 185, y: 205, w: 34, h: 20, c: cfg.window, s: cfg.stroke },
     { x: 225, y: 188, w: 34, h: 20, c: cfg.window, s: cfg.stroke },
@@ -551,9 +486,7 @@ function windowsForVariant(variant, cfg) {
       { x: 385, y: 225, w: 30, h: 18, c: cfg.window, s: cfg.stroke },
     ]);
   }
-  if (variant === "warning") {
-    return base.slice(0, 2);
-  }
+  if (variant === "warning") return base.slice(0, 2);
   return base;
 }
 
@@ -570,6 +503,5 @@ function facesForVariant(variant, total) {
   if (variant === "minimal") spots = spotsBase.slice(0, 2);
   if (variant === "crowd") spots = spotsBase;
   if (variant === "warning") spots = [];
-  // corta/ajusta ao total
   return spots.slice(0, total);
 }

@@ -1,0 +1,213 @@
+/* ====== Hero com tema staff e imagem à ESQUERDA ====== */
+.home {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: var(--staff-hero-gradient);
+  position: relative;
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding-top: var(--space-10);
+}
+
+/* Coluna ESQUERDA: mídia */
+.mediaLeft {
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.heroImage {
+  max-width: 86%;
+  height: auto;
+  filter: drop-shadow(0 12px 30px rgba(0,0,0,.12));
+}
+
+/* Coluna DIREITA: texto/CTA */
+.textRight {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.title {
+  color: #0F1E2E; /* staff-text */
+  line-height: 1.2;
+  margin: 0 0 1rem 0;
+}
+
+.subtitle {
+  font-size: 1.15rem;
+  color: var(--staff-text);
+  max-width: 52ch;
+  margin: 0;
+  text-align: left;
+  opacity: .95;
+}
+
+.ctaRow { display: flex; gap: .6rem; }
+.cta { text-decoration: none; padding-inline: 1.2rem; background-color: var(--staff-primary)}
+.cta:hover { background-color: var(--staff-primary-hover) !important; }
+
+/* Badges com borda animada (reuso do padrão, mas com staff vars) */
+@keyframes spinBorder { to { --angle: 360deg; } }
+@property --angle { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+
+.badges {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .9rem 1.2rem;
+  padding: 0;
+  margin: var(--space-8) 0 0 0;
+}
+
+.badge {
+  --angle: 0deg;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  color: var(--staff-text);
+  font-weight: 600;
+  background:
+    linear-gradient(#fff, #fff) padding-box,
+    conic-gradient(
+      from var(--angle),
+      var(--staff-primary),
+      var(--staff-support),
+      var(--staff-accent),
+      var(--staff-primary)
+    ) border-box;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  padding: .5rem .75rem;
+  box-shadow: 0 1px 0 rgba(0,0,0,.02);
+  transition: transform var(--ts) var(--ease), box-shadow var(--ts) var(--ease);
+}
+.badge:hover { animation: spinBorder 1.2s linear infinite; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,0,0,.08); }
+.badgeIcon { font-size: 1.1rem; color: var(--staff-primary); }
+
+/* ===== Transição do degradê ===== */
+.sectionTransition {
+  position: relative;
+  width: 100%;
+  height: 80px;
+  margin-top: clamp(3rem, 8vw, 12rem);
+}
+.wave { display: block; width: 100%; height: 100%; fill: var(--staff-bg); }
+
+/* ===== Seções extras (fundo sólido) ===== */
+.extras {
+  width: 100%;
+  background: var(--staff-bg);
+  padding: clamp(1.5rem, 3vw, 2rem) 0 clamp(2.5rem, 5vw, 4rem);
+}
+
+/* KPIs */
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.kpiCard {
+  background: var(--staff-card-bg);
+  border: 1px solid var(--staff-card-border);
+  border-radius: 16px;
+  padding: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,.05);
+  display: grid;
+  gap: .4rem;
+}
+.kpiValue { font-size: 1.4rem; color: var(--staff-primary); }
+.kpiLabel { color: color-mix(in oklab, var(--staff-text), #000 12%); }
+
+/* Benefícios */
+.features {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.featureCard {
+  background: #fff;
+  border: 1px solid var(--staff-border);
+  border-radius: 16px;
+  padding: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,.05);
+  display: grid;
+  align-content: start;
+  gap: .5rem;
+  min-height: 130px;
+}
+.featureIconWrap {
+  display: grid;
+  place-items: center;
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--staff-primary), #fff 70%);
+  color: var(--staff-primary);
+  font-size: 1.2rem;
+}
+.featureText { margin: 0; color: color-mix(in oklab, var(--staff-text), #000 10%); }
+
+/* Passo a passo (staff) */
+.steps {
+  display: grid;
+  grid-auto-flow: column;
+  align-items: center;
+  gap: .75rem;
+  margin-top: 1.75rem;
+  padding: .75rem 1rem;
+  border-radius: 14px;
+  background: rgba(255,255,255,.75);
+  border: 1px solid var(--staff-border);
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+}
+.step {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: .6rem;
+}
+.stepNum {
+  width: 28px; height: 28px;
+  border-radius: 999px;
+  display: grid; place-items: center;
+  background: var(--staff-primary);
+  color: #fff;
+  font-weight: 700; font-size: .95rem;
+}
+.stepTitle { margin: 0; font-weight: 700; color: #0F1E2E; }
+.stepText { margin: 0; color: color-mix(in oklab, var(--staff-text), #000 10%); font-size: .95rem; }
+.stepArrow { font-size: 1.2rem; color: var(--staff-primary); opacity: .9; }
+
+/* Descoberta/atalhos */
+.discover {
+  width: 100%;
+  background: var(--staff-bg);
+  padding: clamp(1.5rem, 4vw, 2.5rem) 0 clamp(3rem, 6vw, 4rem);
+}
+.quickLinks { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1rem; }
+
+/* Responsivo */
+@media (max-width: 1100px) {
+  .kpis { grid-template-columns: 1fr; }
+  .features { grid-template-columns: 1fr; }
+  .steps { grid-auto-flow: row; }
+  .stepArrow { display: none; }
+}
+@media (max-width: 960px) {
+  .content { flex-direction: column; }
+  .mediaLeft, .textRight { width: 100%; }
+  .heroImage { max-width: 100%; }
+}

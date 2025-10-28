@@ -1,0 +1,203 @@
+/* ===== Página ===== */
+.page {
+  background: var(--color-bg);
+  color: var(--color-text);
+  padding-bottom: var(--space-8);
+}
+
+/* ===== Switch Mobile/Desktop ===== */
+.mobileOnly { display: block; }
+.desktopOnly { display: none; }
+
+@media (min-width: 768px) {
+  .mobileOnly { display: none; }
+  .desktopOnly { display: block; }
+}
+
+/* ===== Títulos de seção ===== */
+.sectionTitle {
+  margin: 0 0 var(--space-3) 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  color: color-mix(in oklab, var(--color-text), #000 10%);
+}
+
+/* ===== Seção: Próxima consulta ===== */
+.nextSection {
+  padding-block: var(--space-4);
+}
+
+/* ===== Seção Mobile (lista de próximas) ===== */
+.mobileSection {
+  padding-block: var(--space-5);
+}
+
+.mobileHeader {
+  margin-bottom: var(--space-4);
+}
+
+.mobileSubtitle {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.95rem;
+}
+
+/* ===== Seção Calendário (Desktop/Tablet) ===== */
+.calendarSection {
+  padding-block: var(--space-6);
+}
+
+.calendarShell {
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.calendarHeader {
+  padding: var(--space-4);
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+/* ===== Detalhes no modal ===== */
+.detailWrap {
+  display: grid;
+  gap: var(--space-3);
+  padding-top: var(--space-2);
+}
+
+.detailRow {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: var(--space-2);
+  align-items: baseline;
+}
+
+.detailLabel {
+  font-size: 0.8rem;
+  color: var(--color-muted);
+  font-weight: 700;
+}
+
+.detailValue {
+  font-size: 0.95rem;
+  color: var(--color-text);
+  word-break: break-word;
+}
+
+.detailActions {
+  margin-top: var(--space-2);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+/* ===== Lista dentro do MODAL "Consultas do dia" ===== */
+.eventList {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.emptyText {
+  color: var(--color-muted);
+  margin: 0;
+}
+
+.eventItem {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-3);
+  align-items: center;
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  box-shadow: var(--shadow-sm);
+}
+
+.eventLeft { min-width: 0; }
+.eventRight {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  justify-self: end;
+}
+
+.eventTime {
+  display: inline-block;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-right: var(--space-2);
+  min-width: 110px;
+}
+
+.eventTitle {
+  display: block;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.eventMeta {
+  display: block;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ===== Badges de status ===== */
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.statusConfirmed {
+  background: color-mix(in oklab, var(--color-success), white 88%);
+  color: color-mix(in oklab, var(--color-success), black 15%);
+  border-color: color-mix(in oklab, var(--color-success), white 70%);
+}
+
+.statusScheduled {
+  background: color-mix(in oklab, var(--color-primary), white 88%);
+  color: color-mix(in oklab, var(--color-primary), black 15%);
+  border-color: color-mix(in oklab, var(--color-primary), white 70%);
+}
+
+.statusCanceled {
+  background: color-mix(in oklab, var(--color-danger), white 88%);
+  color: color-mix(in oklab, var(--color-danger), black 15%);
+  border-color: color-mix(in oklab, var(--color-danger), white 70%);
+}
+
+.statusCompleted {
+  background: color-mix(in oklab, var(--color-primary), white 92%);
+  color: color-mix(in oklab, var(--color-primary), black 10%);
+  border-color: color-mix(in oklab, var(--color-primary), white 78%);
+}
+
+/* ===== Layout refinado em telas maiores ===== */
+@media (min-width: 640px) {
+  .eventItem { grid-template-columns: 1fr auto; }
+}
+
+@media (min-width: 1024px) {
+  .calendarHeader { padding: var(--space-5); }
+  .eventItem { padding: var(--space-4) var(--space-5); }
+}

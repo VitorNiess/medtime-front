@@ -1,0 +1,227 @@
+/* upcomingAppointmentsListMobile.module.css */
+/* Usa exclusivamente os tokens fornecidos no :root do seu sistema */
+
+.wrapper {
+  display: block;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 0 var(--space-10) 0;
+  overflow: hidden;
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.emptyState {
+  padding: var(--space-4);
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--color-muted);
+}
+
+/* ===== Seções por dia ===== */
+.daySection {
+  margin-bottom: var(--space-3);
+}
+
+.dayHeader {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-card-bg);
+  border-bottom: 1px solid var(--color-border);
+  font-weight: 600;
+  text-transform: capitalize; /* segunda-feira -> Segunda-feira */
+  border-top-left-radius: var(--radius-md);
+  border-top-right-radius: var(--radius-md);
+  backdrop-filter: blur(4px);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* ===== Item ===== */
+.item {
+  margin: var(--space-2) var(--space-4);
+}
+
+.itemBtn {
+  all: unset;
+  display: grid;
+  grid-template-columns: 1fr 4px;
+  align-items: stretch;
+  gap: 0;
+  width: 100%;
+  cursor: pointer;
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: background var(--ts) var(--ease), box-shadow var(--ts) var(--ease), transform var(--ts) var(--ease);
+}
+
+.itemBtn:hover {
+  background: var(--color-card-bg-hover);
+  box-shadow: var(--shadow-md);
+}
+
+.itemBtn:focus-visible {
+  outline: 3px solid color-mix(in oklab, var(--color-primary), white 40%);
+  outline-offset: 2px;
+}
+
+.itemBtn:active {
+  transform: translateY(0.5px);
+}
+
+.itemMain {
+  padding: var(--space-3) var(--space-4);
+}
+
+.colorStripe {
+  width: 4px;
+  min-height: 100%;
+  background: transparent; /* sobrescrito inline por item.color */
+}
+
+/* Linha com horário e status */
+.itemTime {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.itemTitleRow {
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.itemTitle {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.itemMeta {
+  margin-top: 2px;
+  font-size: 0.85rem;
+  color: var(--color-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.itemDoctor, .itemClinic {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dot { opacity: 0.6; }
+
+/* ===== Badges de status ===== */
+/* Usando paleta paciente: success/primary/warning/danger + misturas p/ fundos */
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.statusNeutral {
+  background: color-mix(in oklab, var(--color-text), white 90%);
+  color: color-mix(in oklab, var(--color-text), white 20%);
+  border-color: color-mix(in oklab, var(--color-text), white 80%);
+}
+
+.statusConfirmed { /* sucesso */
+  background: color-mix(in oklab, var(--color-success), white 88%);
+  color: color-mix(in oklab, var(--color-success), black 15%);
+  border-color: color-mix(in oklab, var(--color-success), white 70%);
+}
+
+.statusPending { /* aviso */
+  background: color-mix(in oklab, var(--color-warning), white 88%);
+  color: color-mix(in oklab, var(--color-warning), black 25%);
+  border-color: color-mix(in oklab, var(--color-warning), white 70%);
+}
+
+.statusCanceled { /* erro/perigo */
+  background: color-mix(in oklab, var(--color-danger), white 88%);
+  color: color-mix(in oklab, var(--color-danger), black 15%);
+  border-color: color-mix(in oklab, var(--color-danger), white 70%);
+}
+
+.statusCompleted { /* concluída -> usa a cor primária */
+  background: color-mix(in oklab, var(--color-primary), white 88%);
+  color: color-mix(in oklab, var(--color-primary), black 15%);
+  border-color: color-mix(in oklab, var(--color-primary), white 70%);
+}
+
+/* ===== Modal ===== */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: grid;
+  place-items: center;
+  padding: var(--space-4);
+}
+
+.modalBackdropClick {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  border: 0;
+}
+
+.modalContent {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 560px;
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-4);
+}
+
+.modalClose {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  border: 0;
+  background: transparent;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--color-muted);
+  transition: color var(--ts) var(--ease), transform var(--ts) var(--ease);
+}
+
+.modalClose:hover {
+  color: var(--color-text);
+  transform: scale(1.06);
+}
+
+/* ===== Detalhes dentro do Modal (layout solicitado) ===== */
+
+
+/* ===== Responsividade ===== */
+@media (min-width: 480px) {
+  .itemTitle { font-size: 1rem; }
+  .detailRow { grid-template-columns: 140px 1fr; }
+}

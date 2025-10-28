@@ -55,6 +55,33 @@
   margin: .35rem 0 0 0;
 }
 
+/* ===========================
+   VARIAÇÃO STAFF (azul) – ativa via rota /clinics
+   Remapeia variáveis para que botões/inputs usem staff automaticamente
+=========================== */
+.staff {
+  /* tokens principais */
+  --color-primary:        var(--staff-primary);
+  --color-primary-hover:  var(--staff-primary-hover);
+  --color-accent:         var(--staff-accent);
+  --color-support:        var(--staff-support);
+  --color-bg:             var(--staff-bg);
+  --color-text:           var(--staff-text);
+  --color-muted:          var(--staff-muted);
+  --color-border:         var(--staff-border);
+
+  --color-card-bg:        var(--staff-card-bg);
+  --color-card-bg-hover:  var(--staff-card-bg-hover);
+  --color-card-border:    var(--staff-card-border);
+
+  /* Gradiente da página em azul (usa o que você definiu) */
+  background: var(--staff-hero-gradient);
+}
+
+/* Ajustes finos de tipografia no modo staff (opcional) */
+.staff .title { color: var(--staff-text); }
+.staff .lead  { color: color-mix(in oklab, var(--staff-text), #000 12%); }
+
 /* Responsivo */
 @media (max-width: 1024px) {
   .content {

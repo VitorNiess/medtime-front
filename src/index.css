@@ -10,20 +10,66 @@ code {
 }
 
 /* ------------------------------
-   TOKENS GERAIS (importar 1x)
+   TOKENS GERAIS
 --------------------------------*/
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700&display=swap');
 
 :root {
   /* Cores */
+  /* ===============================
+   Paleta paciente
+  =============================== */
+
   --color-primary: #2E7D6D;
   --color-primary-hover: #399b87;
   --color-accent: #D18292;        /* rosa complementar */
   --color-support: #A8D5BA;       /* verde claro de apoio */
   --color-bg: #fefcf9;            /* cinza quase branco (fundos) */
+  --color-border-cards: #ccc;
   --color-text: #333333;          /* preto suave (tipografia) */
 
-  /* Cores adicionais (estados) */
+  --color-card-bg: color-mix(in oklab, var(--color-primary), var(--color-bg) 95%);
+  --color-card-bg-hover: color-mix(in oklab, var(--color-primary), var(--color-bg) 95%);
+  --color-card-border: color-mix(in oklab, var(--color-primary), #e6e6e6 98%);
+
+  /* ===============================
+   Paleta staff
+  =============================== */
+
+  /* Núcleo */
+  --staff-primary:        #1E5AA6;  /* azul clínico principal */
+  --staff-primary-hover:  #2A6FBE;  /* +claro/saturado p/ hover */
+  --staff-accent:         #63B3ED;  /* azul-ciano de apoio (chips/destaques) */
+  --staff-support:        #A5C9E4;  /* azul claro (superfícies suaves) */
+
+  /* Fundos e texto */
+  --staff-bg:             #F7FAFD;  /* quase branco com toque azulado */
+  --staff-text:           #0F1E2E;  /* navy suave */
+  --staff-muted:          #6B7A90;  /* texto secundário em azul-cinza */
+  --staff-border:         #DCE6F2;  /* borda sutil em azul-claro */
+
+  /* Superfícies (cards/sheets) */
+  --staff-card-bg:        color-mix(in oklab, var(--staff-primary), white 95%);
+  --staff-card-bg-hover:  color-mix(in oklab, var(--staff-primary), white 98%);
+  --staff-card-border:    color-mix(in oklab, var(--staff-primary), #ccc 92%);
+
+  /* Estados/foco */
+  --staff-focus-ring:     color-mix(in oklab, var(--staff-primary), white 40%);
+  --staff-info:           var(--staff-primary);
+
+  /* Gradiente sugerido p/ hero staff */
+  --staff-hero-gradient:  linear-gradient(
+    to bottom right,
+    #ffffff,
+    var(--staff-bg),
+    #E6F0FA,
+    var(--staff-accent),
+    var(--staff-primary-hover),
+    var(--staff-primary),
+    #3A7CA5
+  );
+  
+  /* Cores adicionais */
   --color-success: #2E7D6D;
   --color-danger: #D64550;        /* ligeiramente mais “vermelho” que o rosa */
   --color-warning: #F0B429;
@@ -44,6 +90,7 @@ code {
   --space-7: 2.5rem;    /* 32px */
   --space-8: 3rem;    /* 48px */
   --space-9: 4rem;
+  --space-10: 5rem;
 
   /* Tamanhos, bordas e sombras */
   --radius-sm: 8px;

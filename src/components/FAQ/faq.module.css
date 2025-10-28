@@ -1,0 +1,115 @@
+.faq {
+  --faq-primary: var(--color-primary);
+  --faq-primary-hover: var(--color-primary-hover);
+  --faq-text: var(--color-text);
+  --faq-bg: var(--color-bg);
+
+  width: 100%;
+  padding: clamp(1rem, 3vw, 1.5rem) 0;
+  margin-top: var(--space-6);
+  background: var(--faq-bg);
+}
+
+.faq.staff {
+  --faq-primary: var(--staff-primary) !important;
+  --faq-primary-hover: var(--staff-primary-hover) !important;
+  --faq-text: var(--staff-text) !important;
+  --faq-bg: var(--staff-bg) !important;
+  background: var(--staff-bg) !important;
+}
+
+.container .faq.staff,
+main .faq.staff {
+  background: var(--staff-bg) !important;
+}
+
+.faq.staff,
+.faq.staff * {
+  --color-bg: var(--staff-bg);
+}
+
+.list {
+  display: grid;
+  gap: .9rem;
+  margin-top: .9rem;
+}
+
+.item {
+  position: relative;
+  border-radius: 16px;
+  box-shadow: 0 6px 16px rgba(0,0,0,.10);
+  overflow: clip;
+}
+
+.item::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 4px;
+  background: color-mix(in oklab, var(--faq-primary), #fff 5%) !important;
+}
+
+.summary {
+  list-style: none;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: .75rem;
+  padding: 1rem 1rem 1rem 1.1rem;
+  user-select: none;
+}
+.summary::-webkit-details-marker { display: none; }
+
+.question {
+  font-weight: 800;
+  letter-spacing: .2px;
+  color: var(--faq-text);
+}
+
+.iconWrap {
+  position: relative;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.icon {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 20px;
+  height: 20px;
+  color: var(--faq-primary);
+  transition: opacity var(--ts) var(--ease), transform var(--ts) var(--ease);
+}
+.iconDown { opacity: 1; transform: rotate(0deg) scale(1); }
+.iconUp   { opacity: 0; transform: rotate(-90deg) scale(.9); }
+
+.item[open] .iconDown { opacity: 0; transform: rotate(90deg) scale(.9); }
+.item[open] .iconUp   { opacity: 1; transform: rotate(0deg)  scale(1); }
+
+.answer {
+  padding: 0 1rem 1rem 1.1rem;
+  color: color-mix(in oklab, var(--faq-text), #000 8%);
+  line-height: 1.6;
+  animation: fadeIn var(--ts) var(--ease);
+}
+@keyframes fadeIn {
+  from { opacity: .6; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.summary:focus-visible {
+  outline: 3px solid color-mix(in oklab, var(--faq-primary), white 40%);
+  outline-offset: 2px;
+  border-radius: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .icon { transition: none; }
+  .answer { animation: none; }
+}

@@ -90,6 +90,7 @@
   display: grid; place-items: center;
   color: #6B7280;
   pointer-events: none;
+  align-self: center;
 }
 .iconRight,
 .suffix {
@@ -98,6 +99,7 @@
   inset-block: 0;
   display: grid; place-items: center;
   color: #6B7280;
+  align-self: center;
 }
 
 /* quando usar ícones/prefix/suffix, adicione estas classes ao input */

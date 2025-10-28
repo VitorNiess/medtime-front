@@ -12,7 +12,6 @@ import btn from '../../styles/primitives/buttons.module.css';
 import s from './loginpage.module.css';
 
 import { PiEye, PiEyeClosed } from "react-icons/pi";
-
 import { onlyDigits, maskCPF } from '../../utils/format';
 
 // Constantes (login)
@@ -24,7 +23,12 @@ const CPF_MAX = 11;
 export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from?.pathname || '/';
+
+  // Detecta modo clínicas pela rota
+  const isClinics = location.pathname === '/clinics/login' || location.pathname.startsWith('/clinics');
+
+  // Origem do redirect
+  const from = location.state?.from?.pathname || (isClinics ? '/clinics' : '/agenda');
 
   const { login, busy, error, setError } = useAuth();
 
@@ -35,7 +39,7 @@ export default function LoginPage() {
     remember: true,
   });
 
-  // Derivados (determinísticos)
+  // Derivados
   const loginDigits = onlyDigits(form.loginRaw);
   const loginMasked = maskCPF(loginDigits);
   const loginValid = loginDigits.length === CPF_MAX;
@@ -74,15 +78,25 @@ export default function LoginPage() {
   }
 
   return (
-    <main className={`${s.page} ${u.withNavOffsetPadding}`}>
+    <main className={`${s.page} ${u.withNavOffsetPadding} ${isClinics ? s.staff : ''}`}>
       <div className={`container ${s.content}`}>
         {/* Lado esquerdo (mensagem + ilustração) */}
         <section className={s.left}>
-          <h1 className={`${t.titleLg} ${s.title}`}>Bem-vindo de volta</h1>
+          <h1 className={`${t.titleLg} ${s.title}`}>
+            {isClinics ? 'Bem-vindo ao painel da clínica' : 'Bem-vindo de volta'}
+          </h1>
           <p className={s.lead}>
-            Acesse sua conta para gerenciar agendamentos e acompanhar seus atendimentos.
+            {isClinics
+              ? 'Acesse para gerenciar agendas, confirmar pacientes e acompanhar o financeiro.'
+              : 'Acesse sua conta para gerenciar agendamentos e acompanhar seus atendimentos.'}
           </p>
-          <IsometricClinic variant="pharmacy" theme="evening" width={520} />
+          
+          <IsometricClinic
+            variant='pharmacy'
+            theme={isClinics ? 'day' : 'evening'}
+            width={520}
+            isClinics={isClinics}
+          />
         </section>
 
         {/* Card do formulário */}
@@ -107,7 +121,7 @@ export default function LoginPage() {
                   onKeyDown={handleKeyDownCPF}
                   autoComplete="username"
                   inputMode="numeric"
-                  pattern="^\d{3}\.\d{3}\.\d{3}-\d{2}$"
+                  pattern="^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$"
                   required
                 />
                 <label htmlFor="loginRaw" className={f.labelFloat}>CPF</label>
@@ -171,7 +185,9 @@ export default function LoginPage() {
                 />
                 Lembrar-me
               </label>
-              <a className={s.linkInline} href="/forgot-password">Esqueci minha senha</a>
+              <a className={s.linkInline} href={isClinics ? '/clinics/forgot-password' : '/forgot-password'}>
+                Esqueci minha senha
+              </a>
             </div>
 
             {error && <span className={fl.error}>{error}</span>}
@@ -188,7 +204,10 @@ export default function LoginPage() {
           </form>
 
           <footer className={s.footerNote}>
-            Não tem conta? <a className={s.linkInline} href="/signup">Crie sua conta</a>
+            Não tem conta?{' '}
+            <a className={s.linkInline} href={isClinics ? '/clinics/signup' : '/signup'}>
+              Crie sua conta
+            </a>
           </footer>
         </section>
       </div>

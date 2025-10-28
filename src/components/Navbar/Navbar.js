@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 // Contextos
 import { useAuth } from '../../contexts/AuthContext';
 
 // Constantes
-import navItems from '../../constants/navbarLinks';
+import navItemsPublic from '../../constants/navbarLinks';
+import navItemsClin from '../../constants/navbarLinksClin'; // << novo
 
 // Assets
 import logo from '../../assets/logoMedTimeBg.png';
+import logoClin from '../../assets/logoMedTimeClinBg.png';
 
 // Genéricos
 import btn from '../../styles/primitives/buttons.module.css';
@@ -20,19 +22,25 @@ import s from './navbar.module.css';
 function Navbar() {
   const [isTop, setIsTop] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const { isAuthenticated, logout, busy, user } = useAuth();
 
+  const isClinics = location.pathname === '/clinics' || location.pathname.startsWith('/clinics/');
+  const logoSrc = isClinics ? logoClin : logo;
+
+  const links = isClinics ? navItemsClin : navItemsPublic;
+
   function handleSignUp() {
-    navigate('/cadastro');
+    navigate(isClinics ? '/clinics/cadastro' : '/cadastro');
   }
 
   function handleSignIn() {
-    navigate('/login');
+    navigate(isClinics ? '/clinics/login' : '/login');
   }
 
   function handleHome() {
-    navigate('/');
+    navigate(isClinics ? '/clinics' : '/');
   }
 
   async function handleSignOut() {
@@ -48,11 +56,17 @@ function Navbar() {
   }, []);
 
   return (
-    <nav className={`${s.navbar} ${isTop ? s.transparent : s.solid}`}>
-      <img onClick={handleHome} className={s.logo} src={logo} alt="MedTime Logo" />
+    <nav
+      className={[
+        s.navbar,
+        isTop ? s.transparent : s.solid,
+        isClinics ? s.staff : ''
+      ].join(' ')}
+    >
+      <img onClick={handleHome} className={s.logo} src={logoSrc} alt="MedTime Logo" />
 
       <div className={`${nv.navList} ${s.links}`}>
-        {navItems.map((link) => (
+        {links.map((link) => (
           <Link key={link.id} to={link.path} className={nv.navItem}>
             {link.icon && <span className={nv.navIcon}>{link.icon}</span>}
             <span>{link.label}</span>

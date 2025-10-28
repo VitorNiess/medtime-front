@@ -1,0 +1,120 @@
+.page {
+  background: var(--color-bg);
+  color: var(--color-text);
+  padding-bottom: var(--space-10);
+}
+
+.header {
+  margin-bottom: var(--space-5);
+}
+
+.searchBar {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: .75rem;
+  margin-top: var(--space-3);
+  background: #fff;
+  border: 1px solid rgba(0,0,0,.06);
+  border-radius: var(--radius-lg);
+  padding: .6rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: var(--space-6);
+}
+
+@media (max-width: 960px) {
+  .layout { grid-template-columns: 1fr; }
+}
+
+/* TOC */
+.toc {
+  position: sticky;
+  top: calc(var(--nav-h, 0) + 1rem);
+  align-self: start;
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: #fff;
+  border: 1px solid rgba(0,0,0,.06);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+}
+
+.tocList {
+  list-style: none;
+  padding: 0; margin: 0;
+  display: grid; gap: .4rem;
+}
+
+.tocLink {
+  text-decoration: none;
+  color: var(--color-text);
+  padding: .25rem .25rem;
+  border-radius: 6px;
+  transition: background var(--ts) var(--ease);
+}
+.tocLink:hover {
+  background: color-mix(in oklab, var(--color-primary), #fff 92%);
+}
+
+/* Caixa de ajuda/suporte */
+.helpBox {
+  margin-top: var(--space-3);
+  padding: .75rem;
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-md);
+}
+.helpActions {
+  display: flex; gap: .5rem; margin-top: .5rem;
+}
+
+/* Conteúdo */
+.content { display: grid; gap: var(--space-6); }
+
+.section { display: grid; gap: var(--space-3); }
+
+/* Acordeão */
+.accordion { list-style: none; margin: 0; padding: 0; display: grid; gap: .6rem; }
+.item {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.itemHeader {
+  width: 100%;
+  text-align: left;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: .5rem;
+  padding: .9rem 1rem;
+  background: var(--color-card-bg);
+  border: 0;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.itemPanel {
+  padding: 0 .9rem 1rem 1rem;
+  display: grid; gap: .35rem;
+  background: #fff;
+}
+
+.q { color: var(--color-text); }
+.chev { transition: transform var(--ts) var(--ease); }
+
+.open .chev { transform: rotate(180deg); }
+
+/* Dark mode suave */
+@media (prefers-color-scheme: dark) {
+  .item { background: color-mix(in oklab, var(--color-card-bg), black 8%); }
+  .itemHeader { background: color-mix(in oklab, var(--color-card-bg), black 12%); }
+}

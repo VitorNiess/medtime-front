@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom'; // << adiciona useLocation
 import { useAuth } from '../../contexts/AuthContext';
 
 import IsometricClinic from '../../components/IsometricClinic/IsometricClinic';
@@ -17,12 +17,16 @@ import { onlyDigits, maskCPF, maskPhoneBR, isEmailBasic } from '../../utils/form
 const NAME_MIN = 3, NAME_MAX = 80;
 const ADDR_MIN = 5, ADDR_MAX = 120;
 const PWD_MIN = 6, PWD_MAX = 64;
-const CPF_MIN = 11, CPF_MAX = 11;      // dígitos
-const PHONE_MIN = 11, PHONE_MAX = 11;  // dígitos (formato (00) 00000-0000)
+const CPF_MIN = 11, CPF_MAX = 11;
+const PHONE_MIN = 11, PHONE_MAX = 11;
 
 export default function SignUpPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { signup, busy, error, setError } = useAuth();
+
+  // detecta tema staff pela rota
+  const isClinics = location.pathname === '/clinics' || location.pathname.startsWith('/clinics/');
 
   // guardo valores crus (sem máscara) para cpf/telefone; renderizo mascarado
   const [form, setForm] = useState({
@@ -34,18 +38,18 @@ export default function SignUpPage() {
     senha: '',
   });
 
-    // Validações
-    const nameValid = form.nome.trim().length >= NAME_MIN && form.nome.trim().length <= NAME_MAX;
-    const cpfDigits = onlyDigits(form.cpf);
-    const cpfValid = cpfDigits.length === CPF_MAX;
-    const addrLen = form.endereco.trim().length;
-    const addrValid = addrLen >= ADDR_MIN && addrLen <= ADDR_MAX;
-    const phoneDigits = onlyDigits(form.telefone);
-    const phoneValid = phoneDigits.length >= PHONE_MIN && phoneDigits.length <= PHONE_MAX;
-    const emailValid = isEmailBasic(form.email);
-    const pwdValid = form.senha.length >= PWD_MIN && form.senha.length <= PWD_MAX;
+  // Validações
+  const nameValid = form.nome.trim().length >= NAME_MIN && form.nome.trim().length <= NAME_MAX;
+  const cpfDigits = onlyDigits(form.cpf);
+  const cpfValid = cpfDigits.length === CPF_MAX;
+  const addrLen = form.endereco.trim().length;
+  const addrValid = addrLen >= ADDR_MIN && addrLen <= ADDR_MAX;
+  const phoneDigits = onlyDigits(form.telefone);
+  const phoneValid = phoneDigits.length >= PHONE_MIN && phoneDigits.length <= PHONE_MAX;
+  const emailValid = isEmailBasic(form.email);
+  const pwdValid = form.senha.length >= PWD_MIN && form.senha.length <= PWD_MAX;
 
-    const canSubmit = nameValid && cpfValid && addrValid && phoneValid && emailValid && pwdValid;
+  const canSubmit = nameValid && cpfValid && addrValid && phoneValid && emailValid && pwdValid;
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -70,16 +74,19 @@ export default function SignUpPage() {
       senha: form.senha,
     }, true);
 
-    if (res.ok) navigate('/');
+    if (res.ok) navigate(isClinics ? '/clinics' : '/'); // << volta para home correspondente
   }
 
   return (
-    <main className={`${s.page} ${u.withNavOffsetPadding}`}>
+    <main className={`${s.page} ${u.withNavOffsetPadding} ${isClinics ? s.staff : ''}`}>
       <div className={`container ${s.content}`}>
         <section className={s.left}>
           <h1 className={`${t.titleLg} ${s.title}`}>Crie sua conta</h1>
-          <p className={s.lead}>Cadastre-se para agendar consultas com praticidade e segurança.</p>
-          <IsometricClinic variant="clinic" theme="day" width={520} />
+          <p className={s.lead}>
+            Cadastre-se para {isClinics ? 'gerenciar sua clínica com eficiência.' : 'agendar consultas com praticidade e segurança.'}
+          </p>
+          
+          <IsometricClinic variant="clinic" theme="day" width={520} isClinics={isClinics} />
         </section>
 
         <section className={s.card}>
