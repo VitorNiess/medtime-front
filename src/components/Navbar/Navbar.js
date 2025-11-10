@@ -6,7 +6,7 @@ import { useAuth } from '../../contexts/AuthContext';
 
 // Constantes
 import navItemsPublic from '../../constants/navbarLinks';
-import navItemsClin from '../../constants/navbarLinksClin'; // << novo
+import navItemsClin from '../../constants/navbarLinksClin';
 
 // Assets
 import logo from '../../assets/logoMedTimeBg.png';

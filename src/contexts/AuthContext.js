@@ -3,6 +3,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import { apiLogin, apiSignup, apiLogout } from '../services/auth';
 
 const STORAGE_KEY = 'auth:session:v1';
+const SERVICE_TOKEN_KEY = 'auth_token';
 
 const AuthContext = createContext(null);
 
@@ -15,12 +16,14 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const rawLocal = localStorage.getItem(STORAGE_KEY);
+      const rawSession = !rawLocal ? sessionStorage.getItem(STORAGE_KEY) : null;
+      const raw = rawLocal || rawSession;
       if (raw) {
         const parsed = JSON.parse(raw);
         setUser(parsed.user || null);
         setToken(parsed.token || null);
-        console.log('[Auth] sessão restaurada do localStorage:', parsed);
+        console.log('[Auth] sessão restaurada do storage:', parsed, rawLocal ? '(local)' : '(session)');
       }
     } catch (e) {
       console.warn('[Auth] erro ao ler sessão do storage:', e);
@@ -32,52 +35,106 @@ export function AuthProvider({ children }) {
   const saveSession = useCallback((data, remember) => {
     setUser(data.user);
     setToken(data.token);
-    if (remember) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    } else {
-      localStorage.removeItem(STORAGE_KEY);
+    try {
+      const json = JSON.stringify(data);
+      if (remember) {
+        localStorage.setItem(STORAGE_KEY, json);
+        sessionStorage.removeItem(STORAGE_KEY);
+      } else {
+        sessionStorage.setItem(STORAGE_KEY, json);
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    } catch (e) {
+      console.warn('[Auth] falha ao salvar sessão:', e);
     }
   }, []);
+
+  const clearSessionStorages = () => {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+      sessionStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(SERVICE_TOKEN_KEY);
+      sessionStorage.removeItem(SERVICE_TOKEN_KEY);
+    } catch {}
+  };
 
   const clearSession = useCallback(() => {
     setUser(null);
     setToken(null);
-    localStorage.removeItem(STORAGE_KEY);
+    clearSessionStorages();
   }, []);
 
   /* Login */
-  const login = useCallback(async ({ login, senha, remember = true }) => {
-    setBusy(true);
-    setError(null);
-    try {
-      const res = await apiLogin({ login, senha, remember });
-      saveSession({ user: res.user, token: res.token }, remember);
-      return { ok: true, user: res.user };
-    } catch (e) {
-      console.error('❌ [Auth] erro no login:', e);
-      setError('Falha ao entrar. Tente novamente.');
-      return { ok: false, error: e };
-    } finally {
-      setBusy(false);
-    }
-  }, [saveSession]);
+  const login = useCallback(
+    async ({ login, cpf, senha, remember = true }) => {
+      setBusy(true);
+      setError(null);
+      try {
+        const res = await apiLogin({ login: login ?? cpf, cpf, senha, remember });
+
+        if (!res?.success) {
+          const message = res?.error || 'Falha ao entrar. Verifique CPF e senha.';
+          setError(message);
+          return { ok: false, error: message };
+        }
+
+        saveSession({ user: res.user, token: res.token }, remember);
+        return { ok: true, user: res.user };
+      } catch (e) {
+        console.error('❌ [Auth] erro no login:', e);
+        const message = 'Falha ao entrar. Tente novamente.';
+        setError(message);
+        return { ok: false, error: message };
+      } finally {
+        setBusy(false);
+      }
+    },
+    [saveSession]
+  );
 
   /* Signup */
-  const signup = useCallback(async (payload, remember = true) => {
-    setBusy(true);
-    setError(null);
-    try {
-      const res = await apiSignup(payload);
-      saveSession({ user: res.user, token: res.token }, remember);
-      return { ok: true, user: res.user };
-    } catch (e) {
-      console.error('❌ [Auth] erro no cadastro:', e);
-      setError('Falha ao cadastrar. Tente novamente.');
-      return { ok: false, error: e };
-    } finally {
-      setBusy(false);
-    }
-  }, [saveSession]);
+  const signup = useCallback(
+    async (payload, remember = true) => {
+      setBusy(true);
+      setError(null);
+      try {
+        const res = await apiSignup(payload);
+
+        const loginCpf = payload?.cpf ?? payload?.login;
+        const loginSenha = payload?.senha;
+
+        if (loginCpf && loginSenha) {
+          const loginRes = await apiLogin({
+            cpf: loginCpf,
+            senha: loginSenha,
+            remember,
+          });
+
+          if (loginRes?.success && loginRes?.user && loginRes?.token) {
+            saveSession({ user: loginRes.user, token: loginRes.token }, remember);
+            return { ok: true, user: loginRes.user };
+          }
+        }
+
+        if (res?.user && res?.token) {
+          saveSession({ user: res.user, token: res.token }, remember);
+          return { ok: true, user: res.user };
+        }
+
+        const message = 'Falha ao cadastrar. Tente novamente.';
+        setError(message);
+        return { ok: false, error: message };
+      } catch (e) {
+        console.error('❌ [Auth] erro no cadastro:', e);
+        const message = 'Falha ao cadastrar. Tente novamente.';
+        setError(message);
+        return { ok: false, error: message };
+      } finally {
+        setBusy(false);
+      }
+    },
+    [saveSession]
+  );
 
   /* Logout */
   const logout = useCallback(async () => {
@@ -91,20 +148,22 @@ export function AuthProvider({ children }) {
     }
   }, [clearSession]);
 
-  const value = useMemo(() => ({
-    user,
-    token,
-    isAuthenticated: Boolean(user && token),
-    loading,
-    busy,
-    error,
+  const value = useMemo(
+    () => ({
+      user,
+      token,
+      isAuthenticated: Boolean(user && token),
+      loading,
+      busy,
+      error,
 
-    // actions
-    login,
-    signup,
-    logout,
-    setError,
-  }), [user, token, loading, busy, error, login, signup, logout]);
+      login,
+      signup,
+      logout,
+      setError,
+    }),
+    [user, token, loading, busy, error, login, signup, logout]
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

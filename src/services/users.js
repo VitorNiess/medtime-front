@@ -1,3 +1,5 @@
+import { URLS } from "../utils/urls";
+
 // API FAKE: CRUD de usuários (só console + timeout)
 const DEMO_LATENCY = 400;
 

@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom'; // << adiciona useLocation
+import { useNavigate, useLocation } from 'react-router-dom';
+
 import { useAuth } from '../../contexts/AuthContext';
 
 import IsometricClinic from '../../components/IsometricClinic/IsometricClinic';
@@ -12,6 +13,8 @@ import btn from '../../styles/primitives/buttons.module.css';
 import s from './signup.module.css';
 
 import { onlyDigits, maskCPF, maskPhoneBR, isEmailBasic } from '../../utils/format';
+ 
+import { PiEye, PiEyeClosed } from "react-icons/pi";
 
 // Constantes (signup)
 const NAME_MIN = 3, NAME_MAX = 80;
@@ -24,6 +27,8 @@ export default function SignUpPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { signup, busy, error, setError } = useAuth();
+
+  const [showPass, setShowPass] = useState(false);
 
   // detecta tema staff pela rota
   const isClinics = location.pathname === '/clinics' || location.pathname.startsWith('/clinics/');
@@ -178,15 +183,35 @@ export default function SignUpPage() {
             {/* Senha */}
             <div className={`${fl.group} ${f.float}`}>
               <div className={f.inputWrap}>
-                <input id="senha" name="senha" type="password" placeholder=" "
+                <input
+                  id="senha"
+                  name="senha"
+                  type={showPass ? 'text' : 'password'}
+                  placeholder=" "
                   className={`${f.input} ${!pwdValid && form.senha ? f.invalid : ''}`}
-                  value={form.senha} onChange={handleChange}
-                  autoComplete="new-password" required minLength={PWD_MIN} maxLength={PWD_MAX} />
+                  value={form.senha}
+                  onChange={handleChange}
+                  autoComplete="new-password"
+                  required
+                  minLength={PWD_MIN}
+                  maxLength={PWD_MAX}
+                />
                 <label htmlFor="senha" className={f.labelFloat}>Senha</label>
+
+                <button
+                  type="button"
+                  className={f.affixButton}
+                  aria-label={showPass ? 'Ocultar senha' : 'Mostrar senha'}
+                  onClick={() => setShowPass(v => !v)}
+                >
+                  {showPass ? <PiEyeClosed /> : <PiEye />}
+                </button>
               </div>
               <div className={fl.msgRow}>
                 {!form.senha && <span className={fl.hint}>Mínimo {PWD_MIN} caracteres.</span>}
-                {!!form.senha && !pwdValid && <span className={fl.warn}>Entre {PWD_MIN} e {PWD_MAX} caracteres.</span>}
+                {!!form.senha && !pwdValid && (
+                  <span className={fl.warn}>Entre {PWD_MIN} e {PWD_MAX} caracteres.</span>
+                )}
                 {!!form.senha && pwdValid && <span className={fl.success}>Ok.</span>}
                 <span className={fl.count}>{form.senha.length}/{PWD_MAX}</span>
               </div>

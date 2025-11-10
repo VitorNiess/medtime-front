@@ -34,7 +34,7 @@ export default function LoginPage() {
 
   const [showPass, setShowPass] = useState(false);
   const [form, setForm] = useState({
-    loginRaw: '',  // CPF (somente dígitos)
+    loginRaw: '',
     senha: '',
     remember: true,
   });

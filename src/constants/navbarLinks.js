@@ -3,7 +3,7 @@ import {
   PiBuildingsBold,
   PiCalendarBold,
   PiMagnifyingGlassBold,
-  PiHouse,
+  PiHouseBold,
 } from "react-icons/pi";
 
 import { FaUserDoctor } from "react-icons/fa6";
@@ -13,7 +13,7 @@ const navItems = [
     id: "inicio",
     label: "Início",
     path: "/home",
-    icon: <PiHouse />,
+    icon: <PiHouseBold />,
   },
   {
     id: "agenda",
