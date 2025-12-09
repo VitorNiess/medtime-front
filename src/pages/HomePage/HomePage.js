@@ -1,4 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import { useAuth } from '../../contexts/AuthContext';
 
 // Assets
 import img from '../../assets/imgMainHomeVer2.png';
@@ -33,6 +36,17 @@ import SearchBar from '../../components/SearchBar/SearchBar';
 import FAQ from '../../components/FAQ/FAQ';
 
 function HomePage() {
+  const navigate = useNavigate();
+  const { user, isAuthenticated, loading } = useAuth();
+
+  // 👉 Condicional de redirecionamento para funcionário
+  useEffect(() => {
+    if (loading) return; // espera restaurar sessão
+    if (isAuthenticated && user?.role === 'funcionario') {
+      navigate('/clinics', { replace: true });
+    }
+  }, [loading, isAuthenticated, user, navigate]);
+
   const chips = ["Dermatite", "Dor lombar", "Retorno", "Pediatria hoje"]; // Deve vir da API
 
   const [searchQuery, setSearchQuery] = useState("");

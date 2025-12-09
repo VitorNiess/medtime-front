@@ -159,16 +159,6 @@ export default function DoctorCard({
             <span className={`${s.statusBadge} ${statusClass(status)}`}>{statusLabel(status)}</span>
           </div>
         </div>
-
-        <footer className={s.nextFooter}>
-          <button
-            type="button"
-            className={`${btn.btn} ${btn.btnPrimary}`}
-            onClick={handleOpen}
-          >
-            Ver detalhes
-          </button>
-        </footer>
       </article>
     );
   }
@@ -224,15 +214,6 @@ export default function DoctorCard({
           <PiClockBold aria-hidden="true" /> <strong>{formatTodayTomorrow(nextSlot, "pt-BR", timezone)}</strong>
         </div>
         <div className={s.actions}>
-          <button
-            type="button"
-            className={`${btn.btn} ${btn.btnSecondary}`}
-            onClick={handleView}
-            disabled={viewDisabled}
-            aria-label={`Ver detalhes de ${name}`}
-          >
-            Ver detalhes
-          </button>
           <button
             type="button"
             className={`${btn.btn} ${btn.btnPrimary}`}

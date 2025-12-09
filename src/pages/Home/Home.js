@@ -1,9 +1,11 @@
 // src/pages/Home/Home.jsx
 
-import React, { useMemo } from "react";
+import React, { useMemo, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import DoctorCard from "../../components/DoctorCard/DoctorCard";
 import UserInfoCard from "../../components/UserInfoCard/UserInfoCard";
+
 import s from "./home.module.css";
 import typey from "../../styles/primitives/typography.module.css";
 import utils from "../../styles/base/utilities.module.css";
@@ -12,162 +14,345 @@ import btn from "../../styles/primitives/buttons.module.css";
 // Contextos
 import { useAuth } from "../../contexts/AuthContext";
 
+// Services
+import { listMinhasConsultas } from "../../services/agenda";
+
 export default function Home() {
-    const navigate = useNavigate();
-    const timezone = "America/Sao_Paulo";
-    const locale = "pt-BR";
+  const navigate = useNavigate();
+  const timezone = "America/Sao_Paulo";
+  const locale = "pt-BR";
 
-    const { user } = useAuth();
+  const { user } = useAuth();
 
-    const userMock = {
-        id: "u_123",
-        name: "Paciente Exemplo",
-        email: "paciente@exemplo.com",
-        avatarUrl: "",
-        location: {
-            city: "São João del-Rei",
-            state: "MG",
-            country: "Brasil"
-        },
-        health: {
-            allergies: ["Dipirona", "Amendoim"],
-            chronicConditions: ["Hipertensão", "Asma leve"],
-            medications: ["Losartana 50mg (1x/dia)", "Salbutamol (SOS)"],
-            bloodType: "O+",
-            vaccinations: ["Influenza 2025", "COVID-19 (bivalente)"],
-            emergencyContact: { name: "Maria Silva (mãe)", phone: "(32) 9 9999-0000" },
-            lastCheckupDate: "2025-05-18",
-            heightMeters: 1.75,
-            weightKg: 72,
-            lifestyleNotes: "Exercícios 3x/sem, não fumante, álcool social."
+  // ----- Mock de perfil (mantido por enquanto) -----
+  const userMock = {
+    id: "u_123",
+    name: "Paciente Exemplo",
+    email: "paciente@exemplo.com",
+    avatarUrl: "",
+    location: {
+      city: "São João del-Rei",
+      state: "MG",
+      country: "Brasil",
+    },
+    health: {
+      allergies: ["Dipirona", "Amendoim"],
+      chronicConditions: ["Hipertensão", "Asma leve"],
+      medications: ["Losartana 50mg (1x/dia)", "Salbutamol (SOS)"],
+      bloodType: "O+",
+      vaccinations: ["Influenza 2025", "COVID-19 (bivalente)"],
+      emergencyContact: {
+        name: "Maria Silva (mãe)",
+        phone: "(32) 9 9999-0000",
+      },
+      lastCheckupDate: "2025-05-18",
+      heightMeters: 1.75,
+      weightKg: 72,
+      lifestyleNotes: "Exercícios 3x/sem, não fumante, álcool social.",
+    },
+  };
+
+  // ===== Consultas vindas da API =====
+  const [appointments, setAppointments] = useState([]);
+  const [loadingAppts, setLoadingAppts] = useState(true);
+  const [errorAppts, setErrorAppts] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function fetchConsultas() {
+      console.log("[Home] Carregando consultas (listMinhasConsultas)...");
+      setLoadingAppts(true);
+      setErrorAppts(null);
+
+      try {
+        const res = await listMinhasConsultas();
+        console.log("[Home] Resposta listMinhasConsultas:", res);
+
+        if (cancelled) return;
+
+        if (!res.ok) {
+          setErrorAppts(res.error || "Falha ao carregar consultas.");
+          setAppointments([]);
+          return;
         }
+
+        const consultas = res.consultas || [];
+        console.log("[Home] Consultas brutas:", consultas);
+
+        const mapped = consultas
+          .map((c, idx) => mapConsultaToAppointment(c, idx))
+          .filter(Boolean); // descarta consultas com datas inválidas
+
+        console.log("[Home] Consultas mapeadas -> appointments:", mapped);
+        setAppointments(mapped);
+      } catch (e) {
+        console.error("[Home] Erro ao carregar consultas:", e);
+        if (!cancelled) {
+          setErrorAppts(
+            "Erro ao carregar consultas. Verifique sua conexão ou tente novamente."
+          );
+        }
+      } finally {
+        if (!cancelled) setLoadingAppts(false);
+      }
+    }
+
+    fetchConsultas();
+    return () => {
+      cancelled = true;
     };
+  }, []);
 
-    const appointments = useMemo(() => ([
-        { id:"c1",  title:"Consulta Clínica",        start:"2025-10-27T09:00:00", end:"2025-10-27T09:45:00", status:"confirmed",  doctor:"Marina Duarte",   clinic:"Clínica Vida",    color:"#3E9C88" },
-        { id:"c2",  title:"Retorno Exames",          start:"2025-10-28T14:00:00", end:"2025-10-28T14:30:00", status:"scheduled",  doctor:"Rafael Lima",     clinic:"Centro Médico Alfa" },
-        { id:"c3",  title:"Dermatologia",            start:"2025-10-29T10:30:00", end:"2025-10-29T11:30:00", status:"scheduled",  doctor:"Beatriz N.",      clinic:"Derma+",          color:"#3E9C88" },
-        { id:"c4",  title:"Odontologia",             start:"2025-10-31T16:00:00", end:"2025-10-31T17:00:00", status:"canceled",   doctor:"Carlos A.",       clinic:"Sorriso&Saúde" },
-        { id:"c5",  title:"Cardiologia",             start:"2025-11-01T08:30:00", end:"2025-11-01T09:15:00", status:"confirmed",  doctor:"Ana Cardoso",     clinic:"CardioCare",      color:"#1E5AA6" },
-        { id:"c6",  title:"Oftalmologia",            start:"2025-11-02T13:00:00", end:"2025-11-02T13:40:00", status:"scheduled",  doctor:"Bruno Oliveira",  clinic:"Visão Plena" },
-        { id:"c7",  title:"Ortopedia",               start:"2025-11-05T15:00:00", end:"2025-11-05T15:45:00", status:"confirmed",  doctor:"Helena Prado",    clinic:"Orto+" },
-        { id:"c8",  title:"Ginecologia",             start:"2025-11-07T11:00:00", end:"2025-11-07T11:50:00", status:"scheduled",  doctor:"Patrícia Gomes",  clinic:"Clínica Mulher",  color:"#D18292" },
-        { id:"c9",  title:"Psicologia",              start:"2025-11-09T17:00:00", end:"2025-11-09T17:50:00", status:"scheduled",  doctor:"Thiago Peixoto",  clinic:"Mente Ser" },
-        { id:"c10", title:"Nutrição",                start:"2025-11-10T09:30:00", end:"2025-11-10T10:10:00", status:"confirmed",  doctor:"Larissa Martins", clinic:"VivaBem" },
-        { id:"c11", title:"Fisioterapia",            start:"2025-11-13T08:00:00", end:"2025-11-13T08:45:00", status:"scheduled",  doctor:"Pedro R.",        clinic:"Movimente" },
-        { id:"c12", title:"Endocrinologia",          start:"2025-11-15T13:30:00", end:"2025-11-15T14:10:00", status:"scheduled",  doctor:"Juliana Torres",  clinic:"EndoVida" },
-        { id:"c13", title:"Pediatria",               start:"2025-10-26T10:00:00", end:"2025-10-26T10:40:00", status:"completed",  doctor:"Letícia Ramos",   clinic:"Sorriso de Criança" },
-        { id:"c14", title:"Otorrinolaringologia",    start:"2025-10-24T15:30:00", end:"2025-10-24T16:00:00", status:"completed",  doctor:"Marcelo T.",      clinic:"Oto&Saúde" },
-        { id:"c15", title:"Urologia",                start:"2025-10-23T09:00:00", end:"2025-10-23T09:40:00", status:"canceled",   doctor:"Renato V.",       clinic:"UroCenter" },
-        { id:"c16", title:"Gastroenterologia",       start:"2025-10-22T14:00:00", end:"2025-10-22T14:45:00", status:"completed",  doctor:"Camila Freitas",  clinic:"Gastro+" },
-        { id:"c17", title:"Neurologia",              start:"2025-10-20T08:30:00", end:"2025-10-20T09:20:00", status:"completed",  doctor:"Eduardo N.",      clinic:"NeuroCare",       color:"#1E5AA6" },
-        { id:"c18", title:"Reumatologia",            start:"2025-10-18T16:00:00", end:"2025-10-18T16:40:00", status:"completed",  doctor:"Sofia P.",        clinic:"Rheuma Lab" },
-        { id:"c19", title:"Alergologia",             start:"2025-10-15T11:00:00", end:"2025-10-15T11:30:00", status:"completed",  doctor:"Ítalo M.",        clinic:"Alérgicos Bem" },
-        { id:"c20", title:"Vacinação",               start:"2025-10-12T09:00:00", end:"2025-10-12T09:15:00", status:"completed",  doctor:"Enf. Paula",      clinic:"Imuniza+" },
-    ]), []);
+  // ===== Próxima consulta (timezone-aware, segura) =====
+  const nextAppointment = useMemo(() => {
+    console.log("[Home] Recalculando nextAppointment. Lista:", appointments);
+    if (!appointments || appointments.length === 0) return null;
 
-    const nextAppointment = useMemo(() => {
-        const now = new Date();
+    const now = new Date();
 
-    const toDateTZ = (input) => {
-        if (input instanceof Date) return input;
+    const withStart = appointments.map((a) => {
+      const _start = toDateTZ(a.start, timezone);
+      return { ...a, _start };
+    });
 
-        const m = String(input).match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?$/);
+    const future = withStart
+      .filter((a) => !isNaN(a._start.getTime()) && a._start >= now)
+      .sort((a, b) => a._start - b._start);
 
-        if (!m) return new Date(input);
+    const picked = future[0] || null;
+    console.log("[Home] nextAppointment escolhido:", picked);
+    return picked;
+  }, [appointments, timezone]);
 
-        const [_, y, mo, d, h, mi, s = "0"] = m;
-        const guess = Date.UTC(+y, +mo - 1, +d, +h, +mi, +s);
+  return (
+    <main className={`${s.page} ${utils.withNavOffsetPadding}`}>
+      <section className={`container ${s.hero}`}>
+        <div className={s.heroLeft}>
+          <h1 className={typey.titleLg}>Olá, {user?.name ?? "Paciente"}</h1>
+          <p className={s.sub}>
+            Gerencie suas consultas e encontre atendimento perto de você.
+          </p>
 
-        const parts = new Intl.DateTimeFormat("en-CA", {
-            timeZone: timezone, hour12: false,
-            year:"numeric", month:"2-digit", day:"2-digit",
-            hour:"2-digit", minute:"2-digit", second:"2-digit",
-        }).formatToParts(new Date(guess));
+          <div className={s.quickActions}>
+            <button
+              className={`${btn.btn} ${btn.btnPrimary}`}
+              onClick={() => navigate("/agenda")}
+            >
+              Ver agenda
+            </button>
+            <button
+              className={`${btn.btn} ${btn.btnSecondary}`}
+              onClick={() => navigate("/medicos")}
+            >
+              Buscar médico
+            </button>
+          </div>
+        </div>
+      </section>
 
-        const get = (t) => Number(parts.find((p) => p.type === t).value);
+      <section className={s.discover}>
+        {/* Perfil rápido */}
+        <div className="container">
+          <h2 className={typey.titleSm}>Seu perfil</h2>
+          <UserInfoCard
+            name={userMock.name}
+            email={userMock.email}
+            avatarUrl={userMock.avatarUrl}
+            locationLabel={`${userMock.location.city}/${userMock.location.state}`}
+            allergies={userMock.health.allergies}
+            chronicConditions={userMock.health.chronicConditions}
+            medications={userMock.health.medications}
+            bloodType={userMock.health.bloodType}
+            vaccinations={userMock.health.vaccinations}
+            emergencyContact={userMock.health.emergencyContact}
+            lastCheckupDate={userMock.health.lastCheckupDate}
+            heightMeters={userMock.health.heightMeters}
+            weightKg={userMock.health.weightKg}
+            lifestyleNotes={userMock.health.lifestyleNotes}
+            onEdit={() => console.log("Editar perfil de saúde")}
+          />
+        </div>
 
-        const tzY = get("year"), tzM = get("month"), tzD = get("day");
-        const tzH = get("hour"), tzMin = get("minute"), tzS = get("second");
+        {/* Próxima consulta */}
+        <div className="container">
+          <h2 className={typey.titleSm}>Próxima consulta</h2>
 
-        const deltaMin = (Date.UTC(+y, +mo - 1, +d, +h, +mi, +s) -
-            Date.UTC(tzY, tzM - 1, tzD, tzH, tzMin, tzS)) / 60000;
+          {loadingAppts && (
+            <p className={typey.bodyMd}>Carregando suas consultas…</p>
+          )}
 
-        return new Date(guess + deltaMin * 60000);
-    };
+          {!loadingAppts && errorAppts && (
+            <p className={typey.bodyMd} style={{ color: "var(--color-danger)" }}>
+              {errorAppts}
+            </p>
+          )}
 
-    return [...appointments]
-        .map(a => ({ ...a, _start: toDateTZ(a.start) }))
-        .filter(a => a._start.getTime() >= now.getTime())
-        .sort((a, b) => a._start - b._start)[0] || null;
-    }, [appointments]);
+          {!loadingAppts && !errorAppts && !nextAppointment && (
+            <p className={typey.bodyMd}>
+              Você ainda não tem consultas futuras agendadas.
+            </p>
+          )}
 
-    return (
-        <main className={`${s.page} ${utils.withNavOffsetPadding}`}>
-            <section className={`container ${s.hero}`}>
-                <div className={s.heroLeft}>
-                    <h1 className={typey.titleLg}>Olá, {user.name}</h1>
-                    <p className={s.sub}>Gerencie suas consultas e encontre atendimento perto de você.</p>
+          {!loadingAppts && !errorAppts && nextAppointment && (
+            <DoctorCard
+              variant="next-appt"
+              timezone={timezone}
+              locale={locale}
+              appointment={nextAppointment}
+              onOpenDetail={(item) => navigate(`/consultas/${item.id}`)}
+            />
+          )}
+        </div>
 
-                    <div className={s.quickActions}>
-                        <button className={`${btn.btn} ${btn.btnPrimary}`} onClick={() => navigate("/agenda")}>
-                        Ver agenda
-                        </button>
-                        <button className={`${btn.btn} ${btn.btnSecondary}`} onClick={() => navigate("/medicos")}>
-                        Buscar médico
-                        </button>
-                    </div>
-                </div>
-            </section>
+        {/* Clínicas próximas */}
+        <div className="container">
+          <h2 className={typey.titleSm}>Clínicas próximas</h2>
+          <div className={s.card}>
+            <p className={s.m0}>
+              Ative sua localização para ver unidades próximas e agendar mais
+              rápido.
+            </p>
+            <div className={s.mt2}>
+              <button
+                className={`${btn.btn} ${btn.btnSecondary}`}
+                onClick={() => navigate("/unidades")}
+              >
+                Ver clínicas
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  );
+}
 
-            <section className={s.discover}>
-                {/* Perfil rápido */}
-                <div className="container">
-                    <h2 className={typey.titleSm}>Seu perfil</h2>
-                    <UserInfoCard
-                        name={userMock.name}
-                        email={userMock.email}
-                        avatarUrl={userMock.avatarUrl}
-                        locationLabel={`${userMock.location.city}/${userMock.location.state}`}
-                        allergies={userMock.health.allergies}
-                        chronicConditions={userMock.health.chronicConditions}
-                        medications={userMock.health.medications}
-                        bloodType={userMock.health.bloodType}
-                        vaccinations={userMock.health.vaccinations}
-                        emergencyContact={userMock.health.emergencyContact}
-                        lastCheckupDate={userMock.health.lastCheckupDate}
-                        heightMeters={userMock.health.heightMeters}
-                        weightKg={userMock.health.weightKg}
-                        lifestyleNotes={userMock.health.lifestyleNotes}
-                        onEdit={() => console.log("Editar perfil de saúde")}
-                    />
-                </div>
+/* ===== Mapear consulta -> appointment usado pela UI (DoctorCard) ===== */
 
-                {/* Próxima consulta */}
-                <div className="container">
-                    <h2 className={typey.titleSm}>Próxima consulta</h2>
-                    <DoctorCard
-                        variant="next-appt"
-                        timezone={timezone}
-                        locale={locale}
-                        appointment={nextAppointment}
-                        onOpenDetail={(item) => navigate(`/consultas/${item.id}`)}
-                    />
-                </div>
+function mapConsultaToAppointment(consulta, index) {
+  console.log("[Home] mapConsultaToAppointment #", index, consulta);
+  if (!consulta) return null;
 
-                {/* Clínicas próximas */}
-                <div className="container">
-                    <h2 className={typey.titleSm}>Clínicas próximas</h2>
-                    <div className={s.card}>
-                        <p className={s.m0}>Ative sua localização para ver unidades próximas e agendar mais rápido.</p>
-                        <div className={s.mt2}>
-                        <button className={`${btn.btn} ${btn.btnSecondary}`} onClick={() => navigate("/unidades")}>
-                            Ver clínicas
-                        </button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
+  const cm = consulta.calendario_medico || {};
+  const medico = cm.medico || {};
+  const unidade = cm.unidade || {};
+
+  const rawStart = cm.horario_inicio || consulta.tempo_consulta;
+  const rawEnd =
+    cm.horario_fim ||
+    cm.horario_inicio ||
+    consulta.tempo_consulta ||
+    rawStart;
+
+  console.log("[Home] rawStart/rawEnd consulta #", index, { rawStart, rawEnd });
+
+  if (!rawStart) {
+    console.warn(
+      "[Home] Consulta sem horário de início; ignorando (#",
+      index,
+      "):",
+      consulta
     );
+    return null;
+  }
+
+  const startDate = new Date(rawStart);
+  const endDate = new Date(rawEnd);
+
+  if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+    console.warn("[Home] Datas inválidas na consulta; ignorando #", index, {
+      consulta,
+      rawStart,
+      rawEnd,
+    });
+    return null;
+  }
+
+  const startISO = startDate.toISOString();
+  const endISO = endDate.toISOString();
+
+  const rawStatus = consulta.status || "agendado";
+  const status = normalizeStatus(rawStatus);
+
+  const mapped = {
+    id: consulta.id_consulta ?? consulta.id,
+    title: medico.especialidade || "Consulta",
+    start: startISO,
+    end: endISO,
+    status,
+    doctor: medico.nome || "",
+    clinic: unidade.nome || "",
+    color: status === "canceled" ? "#9CA3AF" : "#3E9C88",
+    rawStatus,
+  };
+
+  console.log("[Home] Appointment mapeado #", index, mapped);
+  return mapped;
+}
+
+function normalizeStatus(apiStatus) {
+  if (!apiStatus) return "scheduled";
+  const sVal = String(apiStatus).toLowerCase();
+
+  if (sVal === "agendado" || sVal === "marcado" || sVal === "pendente")
+    return "scheduled";
+  if (sVal === "confirmado" || sVal === "confirmada") return "confirmed";
+  if (sVal === "cancelado" || sVal === "cancelada") return "canceled";
+  if (sVal === "concluido" || sVal === "concluida" || sVal === "finalizado")
+    return "completed";
+
+  return "scheduled";
+}
+
+/* ===== Helpers de data/timezone (idênticos à PatientHome) ===== */
+
+function toDateTZ(input, tz = "America/Sao_Paulo") {
+  if (input instanceof Date) return input;
+  if (typeof input !== "string") return new Date(input);
+
+  const m = input.match(
+    /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?/
+  );
+  if (!m) return new Date(input);
+
+  const [_, y, mo, d, h, mi, s = "0"] = m;
+  return wallTimeInTZToDate(+y, +mo, +d, +h, +mi, +s, tz);
+}
+
+function wallTimeInTZToDate(
+  year,
+  month,
+  day,
+  hour,
+  minute,
+  second,
+  timeZone
+) {
+  const guess = Date.UTC(year, month - 1, day, hour, minute, second);
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone,
+    hour12: false,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  }).formatToParts(new Date(guess));
+
+  const get = (t) => Number(parts.find((p) => p.type === t).value);
+  const tzY = get("year");
+  const tzM = get("month");
+  const tzD = get("day");
+  const tzH = get("hour");
+  const tzMin = get("minute");
+  const tzS = get("second");
+
+  const deltaMin =
+    (Date.UTC(year, month - 1, day, hour, minute, second) -
+      Date.UTC(tzY, tzM - 1, tzD, tzH, tzMin, tzS)) /
+    60000;
+
+  return new Date(guess + deltaMin * 60000);
 }

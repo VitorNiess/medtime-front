@@ -17,7 +17,7 @@ import { onlyDigits, maskCPF } from '../../utils/format';
 // Constantes (login)
 const PWD_MIN = 6;
 const PWD_MAX = 64;
-const CPF_MIN = 11; // dígitos
+const CPF_MIN = 11;
 const CPF_MAX = 11;
 
 export default function LoginPage() {
@@ -71,7 +71,8 @@ export default function LoginPage() {
     const res = await login({
       login: loginDigits,
       senha: form.senha,
-      remember: form.remember
+      remember: form.remember,
+      mode: isClinics ? 'funcionario' : 'paciente',
     });
 
     if (res.ok) navigate(from, { replace: true });

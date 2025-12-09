@@ -1,4 +1,18 @@
-import React, { useMemo, useState, useCallback } from "react";
+// src/pages/ClinicsSearchPage/ClinicsSearchPage.jsx
+import React, {
+  useMemo,
+  useState,
+  useCallback,
+  useEffect,
+} from "react";
+
+// Services
+import {
+  listUnidades,
+  listMedicosByUnidade,
+} from "../../services/unidades";
+import { listarHorariosDisponiveis } from "../../services/calendario";
+import { agendarConsulta } from "../../services/agenda";
 
 // Estilos
 import s from "./clinicsSearchPage.module.css";
@@ -11,136 +25,39 @@ import utils from "../../styles/base/utilities.module.css";
 import SearchBar from "../../components/SearchBar/SearchBar";
 import ClinicCard from "../../components/ClinicCard/ClinicCard";
 
-// ====== Mock de Clínicas
-const mockClinics = [
-  {
-    id: "cl001",
-    name: "Clínica Vida",
-    logoUrl: "",
-    addressLine: "Rua Dr. João, 123",
-    district: "Centro",
-    cityState: "São João del-Rei/MG",
-    distanceKm: 1.8,
-    phone: "(32) 98888-0000",
-    todayHours: "Hoje: 08:00–18:00",
-    openNow: true,
-    tags: ["telemedicina", "acessibilidade", "estacionamento"],
-    rating: 4.6,
-    reviewCount: 128,
-  },
-  {
-    id: "cl002",
-    name: "CardioCare",
-    logoUrl: "",
-    addressLine: "Av. Tiradentes, 450",
-    district: "Colônia",
-    cityState: "São João del-Rei/MG",
-    distanceKm: 4.2,
-    phone: "(32) 97777-1111",
-    todayHours: "Hoje: 07:30–17:30",
-    openNow: false,
-    tags: ["acessibilidade"],
-    rating: 4.8,
-    reviewCount: 312,
-  },
-  {
-    id: "cl003",
-    name: "Orto+",
-    logoUrl: "",
-    addressLine: "Rua das Palmeiras, 55",
-    district: "Bonfim",
-    cityState: "São João del-Rei/MG",
-    distanceKm: 2.7,
-    phone: "(32) 96666-2222",
-    todayHours: "Hoje: 09:00–19:00",
-    openNow: true,
-    tags: ["estacionamento"],
-    rating: 4.3,
-    reviewCount: 89,
-  },
-  {
-    id: "cl004",
-    name: "Clínica Mulher",
-    logoUrl: "",
-    addressLine: "Rua das Flores, 800",
-    district: "Centro",
-    cityState: "São João del-Rei/MG",
-    distanceKm: 0.9,
-    phone: "(32) 95555-3333",
-    todayHours: "Hoje: 08:00–18:00",
-    openNow: true,
-    tags: ["telemedicina", "acessibilidade"],
-    rating: 4.7,
-    reviewCount: 154,
-  },
-  {
-    id: "cl005",
-    name: "Visão Plena",
-    logoUrl: "",
-    addressLine: "Alameda Minas, 200",
-    district: "Água Limpa",
-    cityState: "São João del-Rei/MG",
-    distanceKm: 6.1,
-    phone: "(32) 94444-4444",
-    todayHours: "Hoje: 10:00–16:00",
-    openNow: false,
-    tags: [],
-    rating: 4.1,
-    reviewCount: 65,
-  },
-  {
-    id: "cl006",
-    name: "Mente Ser",
-    logoUrl: "",
-    addressLine: "Rua do Carmo, 12",
-    district: "Centro",
-    cityState: "São João del-Rei/MG",
-    distanceKm: 1.1,
-    phone: "(32) 93333-5555",
-    todayHours: "Hoje: 08:00–20:00",
-    openNow: true,
-    tags: ["telemedicina"],
-    rating: 4.9,
-    reviewCount: 420,
-  },
-  {
-    id: "cl007",
-    name: "EndoVida",
-    logoUrl: "",
-    addressLine: "Av. Leite de Castro, 1030",
-    district: "Fábricas",
-    cityState: "São João del-Rei/MG",
-    distanceKm: 3.5,
-    phone: "(32) 92222-6666",
-    todayHours: "Hoje: 07:00–15:00",
-    openNow: false,
-    tags: ["acessibilidade", "estacionamento"],
-    rating: 4.0,
-    reviewCount: 38,
-  },
-  {
-    id: "cl008",
-    name: "NeuroCare",
-    logoUrl: "",
-    addressLine: "Rua Direita, 400",
-    district: "Centro",
-    cityState: "São João del-Rei/MG",
-    distanceKm: 2.2,
-    phone: "(32) 91111-7777",
-    todayHours: "Hoje: 08:00–18:00",
-    openNow: true,
-    tags: ["telemedicina", "estacionamento"],
-    rating: 4.5,
-    reviewCount: 97,
-  },
-];
-
 // ====== Helpers
 function norm(str = "") {
   return str
     .normalize("NFD")
     .replace(/\p{Diacritic}/gu, "")
     .toLowerCase();
+}
+
+function formatSlotDate(slot) {
+  if (!slot?.horario_inicio) return "";
+  const d = new Date(slot.horario_inicio);
+  if (isNaN(d.getTime())) return "";
+  return d.toLocaleDateString("pt-BR", {
+    weekday: "short",
+    day: "2-digit",
+    month: "2-digit",
+  });
+}
+
+function formatSlotTimeRange(slot) {
+  if (!slot?.horario_inicio || !slot?.horario_fim) return "";
+  const ini = new Date(slot.horario_inicio);
+  const fim = new Date(slot.horario_fim);
+  if (isNaN(ini.getTime()) || isNaN(fim.getTime())) return "";
+  const hIni = ini.toLocaleTimeString("pt-BR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  const hFim = fim.toLocaleTimeString("pt-BR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  return `${hIni} – ${hFim}`;
 }
 
 export default function ClinicsSearchPage() {
@@ -153,14 +70,99 @@ export default function ClinicsSearchPage() {
   const [park, setPark] = useState(false);
   const [openNow, setOpenNow] = useState(false);
 
+  // ==== Unidades vindas da API ====
+  const [clinics, setClinics] = useState([]);
+  const [loadingClinics, setLoadingClinics] = useState(true);
+  const [errorClinics, setErrorClinics] = useState(null);
+
+  // ==== Modal de médicos da unidade ====
+  const [clinicModalOpen, setClinicModalOpen] = useState(false);
+  const [selectedClinic, setSelectedClinic] = useState(null);
+  const [clinicDoctors, setClinicDoctors] = useState([]);
+  const [clinicDoctorsLoading, setClinicDoctorsLoading] = useState(false);
+  const [clinicDoctorsError, setClinicDoctorsError] = useState(null);
+
+  // ==== Horários do médico ====
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const [slots, setSlots] = useState([]);
+  const [slotsLoading, setSlotsLoading] = useState(false);
+  const [slotsError, setSlotsError] = useState(null);
+
+  // ==== Estado do agendamento do slot ====
+  const [bookingLoading, setBookingLoading] = useState(false);
+  const [bookingError, setBookingError] = useState(null);
+  const [bookingSuccess, setBookingSuccess] = useState(null);
+
+  // ===============================
+  // Carregar unidades da API
+  // ===============================
+  useEffect(() => {
+    let cancelled = false;
+
+    async function fetchUnidades() {
+      console.log("[ClinicsSearchPage] listUnidades()…");
+      setLoadingClinics(true);
+      setErrorClinics(null);
+
+      try {
+        const data = await listUnidades(); // retorna [] em erro
+        if (cancelled) return;
+
+        console.log("[ClinicsSearchPage] unidades brutas:", data);
+
+        const mapped = (data || []).map((u, idx) => {
+          const id = u.id_unidade ?? u.id ?? idx;
+          return {
+            id,
+            id_unidade: u.id_unidade ?? u.id ?? id,
+            name: u.nome || "Unidade",
+            logoUrl: "",
+            addressLine: u.endereco || "",
+            district: "",
+            cityState: "",
+            distanceKm: null,
+            phone: u.telefone || "",
+            todayHours: "",
+            openNow: true,
+            tags: [],
+            rating: null,
+            reviewCount: null,
+            _raw: u,
+          };
+        });
+
+        console.log("[ClinicsSearchPage] unidades mapeadas:", mapped);
+        setClinics(mapped);
+      } catch (e) {
+        console.error("[ClinicsSearchPage] erro ao carregar unidades:", e);
+        if (!cancelled) {
+          setErrorClinics(
+            "Erro ao carregar unidades. Verifique sua conexão ou tente novamente."
+          );
+          setClinics([]);
+        }
+      } finally {
+        if (!cancelled) setLoadingClinics(false);
+      }
+    }
+
+    fetchUnidades();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const handleSubmit = useCallback((q) => {
     setSubmittedQuery(q.trim());
   }, []);
 
-  // Filtro principal
+  // ===============================
+  // Filtro principal (clínicas)
+  // ===============================
   const filtered = useMemo(() => {
     const q = norm(submittedQuery);
-    let list = mockClinics.filter((c) => {
+
+    let list = (clinics || []).filter((c) => {
       const hay = [
         c.name,
         c.addressLine,
@@ -174,33 +176,217 @@ export default function ClinicsSearchPage() {
 
       if (q && !hay.includes(q)) return false;
 
-      // chips
       if (tele && !(c.tags || []).includes("telemedicina")) return false;
       if (acess && !(c.tags || []).includes("acessibilidade")) return false;
       if (park && !(c.tags || []).includes("estacionamento")) return false;
-      if (openNow && !c.openNow) return false;
+      if (openNow && c.openNow === false) return false;
 
       return true;
     });
 
     if (nearMe) {
-      list = list.slice().sort((a, b) => (a.distanceKm ?? 999) - (b.distanceKm ?? 999));
+      list = list
+        .slice()
+        .sort(
+          (a, b) => (a.distanceKm ?? 999) - (b.distanceKm ?? 999)
+        );
     } else {
       list = list
         .slice()
-        .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0) || (a.distanceKm ?? 999) - (b.distanceKm ?? 999));
+        .sort(
+          (a, b) =>
+            (b.rating ?? 0) - (a.rating ?? 0) ||
+            (a.distanceKm ?? 999) - (b.distanceKm ?? 999)
+        );
     }
 
     return list;
-  }, [submittedQuery, nearMe, tele, acess, park, openNow]);
+  }, [submittedQuery, nearMe, tele, acess, park, openNow, clinics]);
+
+  // ===============================
+  // Abrir modal de médicos da unidade
+  // ===============================
+  const handleOpenClinicDoctors = useCallback(async (clinic) => {
+    console.log("[ClinicsSearchPage] abrir modal unidade:", clinic);
+    setSelectedClinic(clinic);
+    setClinicModalOpen(true);
+
+    setClinicDoctors([]);
+    setClinicDoctorsError(null);
+    setSelectedDoctor(null);
+    setSlots([]);
+    setSlotsError(null);
+    setSlotsLoading(false);
+    setBookingError(null);
+    setBookingSuccess(null);
+    setBookingLoading(false);
+
+    setClinicDoctorsLoading(true);
+    try {
+      const idUnidade = clinic.id_unidade ?? clinic.id;
+      console.log("[ClinicsSearchPage] listMedicosByUnidade id:", idUnidade);
+
+      const res = await listMedicosByUnidade(idUnidade);
+
+      console.log("[ClinicsSearchPage] resultado listMedicosByUnidade:", res);
+
+      if (!res.ok) {
+        setClinicDoctorsError(res.error || "Falha ao carregar médicos.");
+        setClinicDoctors([]);
+        return;
+      }
+
+      const medicos = res.medicos || [];
+      setClinicDoctors(medicos);
+    } catch (e) {
+      console.error("[ClinicsSearchPage] erro ao carregar médicos:", e);
+      setClinicDoctorsError(
+        "Erro ao carregar médicos. Tente novamente."
+      );
+      setClinicDoctors([]);
+    } finally {
+      setClinicDoctorsLoading(false);
+    }
+  }, []);
+
+  const handleCloseClinicModal = useCallback(() => {
+    setClinicModalOpen(false);
+    setSelectedClinic(null);
+    setClinicDoctors([]);
+    setClinicDoctorsError(null);
+    setClinicDoctorsLoading(false);
+    setSelectedDoctor(null);
+    setSlots([]);
+    setSlotsError(null);
+    setSlotsLoading(false);
+    setBookingError(null);
+    setBookingSuccess(null);
+    setBookingLoading(false);
+  }, []);
+
+  // ===============================
+  // Abrir horários disponíveis do médico
+  // ===============================
+  const handleOpenDoctorSlots = useCallback(
+    async (doctor) => {
+      if (!selectedClinic) return;
+
+      console.log("[ClinicsSearchPage] abrir horários para médico:", doctor);
+      setSelectedDoctor(doctor);
+      setSlots([]);
+      setSlotsError(null);
+      setSlotsLoading(true);
+      setBookingError(null);
+      setBookingSuccess(null);
+      setBookingLoading(false);
+
+      try {
+        const idMedico = doctor.id_medico ?? doctor.id;
+        const idUnidade = selectedClinic.id_unidade ?? selectedClinic.id;
+
+        console.log(
+          "[ClinicsSearchPage] listarHorariosDisponiveis medico/unidade:",
+          idMedico,
+          idUnidade
+        );
+
+        const res = await listarHorariosDisponiveis(idMedico, idUnidade);
+
+        console.log("[ClinicsSearchPage] resposta listarHorariosDisponiveis:", res);
+
+        if (Array.isArray(res)) {
+          setSlots(res);
+        } else if (res && res.error) {
+          setSlotsError(res.error || "Erro ao carregar horários.");
+        } else {
+          setSlotsError("Resposta inesperada ao carregar horários.");
+        }
+      } catch (e) {
+        console.error("[ClinicsSearchPage] erro ao buscar horários:", e);
+        setSlotsError("Erro ao carregar horários. Tente novamente.");
+      } finally {
+        setSlotsLoading(false);
+      }
+    },
+    [selectedClinic]
+  );
+
+  const handleBackToDoctors = useCallback(() => {
+    setSelectedDoctor(null);
+    setSlots([]);
+    setSlotsError(null);
+    setSlotsLoading(false);
+    setBookingError(null);
+    setBookingSuccess(null);
+    setBookingLoading(false);
+  }, []);
+
+  // ===============================
+  // Selecionar slot -> AGENDAR de fato
+  // ===============================
+  const handleSelectSlot = useCallback(async (slot) => {
+    if (!slot?.id_calendario_medico) return;
+
+    console.log("[ClinicsSearchPage] agendar slot:", slot);
+    setBookingError(null);
+    setBookingSuccess(null);
+    setBookingLoading(true);
+
+    try {
+      const res = await agendarConsulta({
+        id_calendario_medico: slot.id_calendario_medico,
+      });
+
+      console.log("[ClinicsSearchPage] resposta agendarConsulta:", res);
+
+      if (!res.ok) {
+        setBookingError(
+          res.error || "Falha ao agendar consulta. Tente novamente."
+        );
+        return;
+      }
+
+      // Sucesso
+      setBookingSuccess("Consulta agendada com sucesso!");
+      // Remove o slot da lista (já ficou ocupado)
+      setSlots((prev) =>
+        Array.isArray(prev)
+          ? prev.filter(
+              (s) => s.id_calendario_medico !== slot.id_calendario_medico
+            )
+          : prev
+      );
+    } catch (e) {
+      console.error("[ClinicsSearchPage] erro ao agendar consulta:", e);
+      setBookingError(
+        "Erro ao agendar consulta. Verifique sua conexão e tente novamente."
+      );
+    } finally {
+      setBookingLoading(false);
+    }
+  }, []);
+
+  // ===============================
+  // Render
+  // ===============================
+  const resultsLabel =
+    filtered.length === 1
+      ? "1 resultado"
+      : `${filtered.length} resultados`;
 
   return (
-    <main className={`container stack-lg ${s.page} ${utils.withNavOffsetPadding}`} aria-labelledby="clinics-title">
+    <main
+      className={`container stack-lg ${s.page} ${utils.withNavOffsetPadding}`}
+      aria-labelledby="clinics-title"
+    >
       {/* Título/Subtítulo */}
       <header className="stack">
-        <h1 id="clinics-title" className={typey.titleLg}>Buscar clínicas</h1>
+        <h1 id="clinics-title" className={typey.titleLg}>
+          Buscar clínicas
+        </h1>
         <p className={typey.bodyMd}>
-          Encontre unidades por nome, endereço ou especialidade. Use os filtros rápidos para refinar.
+          Encontre unidades por nome, endereço ou especialidade. Use os
+          filtros rápidos para refinar.
         </p>
       </header>
 
@@ -209,7 +395,7 @@ export default function ClinicsSearchPage() {
         query={query}
         setQuery={setQuery}
         onSubmit={handleSubmit}
-        placeholder="Ex.: Clínica Vida, cardiologia Centro, telemedicina…"
+        placeholder="Ex.: Unidade Central, pronto atendimento, cardiologia…"
         submitLabel="Buscar"
       />
 
@@ -261,48 +447,249 @@ export default function ClinicsSearchPage() {
 
       {/* Resultado */}
       <div aria-live="polite" className="stack">
-        <p className={typey.captionSm}>
-          {filtered.length} {filtered.length === 1 ? "resultado" : "resultados"}
-          {submittedQuery ? ` para “${submittedQuery}”` : ""}
-          {nearMe ? " • ordenado por distância" : " • ordenado por avaliação"}
-        </p>
+        {loadingClinics && (
+          <p className={typey.bodyMd}>Carregando unidades…</p>
+        )}
 
-        {/* Lista de cards */}
-        <div className="stack">
-          {filtered.length === 0 ? (
+        {!loadingClinics && errorClinics && (
+          <p className={typey.bodyMd} style={{ color: "var(--color-danger)" }}>
+            {errorClinics}
+          </p>
+        )}
+
+        {!loadingClinics && !errorClinics && (
+          <>
+            <p className={typey.captionSm}>
+              {resultsLabel}
+              {submittedQuery ? ` para “${submittedQuery}”` : ""}
+              {nearMe
+                ? " • ordenado por distância"
+                : " • ordenado por avaliação"}
+            </p>
+
+            {/* Lista de cards */}
             <div className="stack">
-              <p className={typey.bodyMd}>
-                Nenhuma clínica encontrada. Ajuste os filtros ou tente outro termo.
-              </p>
+              {filtered.length === 0 ? (
+                <div className="stack">
+                  <p className={typey.bodyMd}>
+                    Nenhuma clínica encontrada. Ajuste os filtros ou tente
+                    outro termo.
+                  </p>
+                  <button
+                    type="button"
+                    className={`${btn.btn} ${btn.btnGhost}`}
+                    onClick={() => {
+                      setQuery("");
+                      setSubmittedQuery("");
+                      setNearMe(false);
+                      setTele(false);
+                      setAcess(false);
+                      setPark(false);
+                      setOpenNow(false);
+                    }}
+                  >
+                    Limpar filtros
+                  </button>
+                </div>
+              ) : (
+                filtered.map((c) => (
+                  <ClinicCard
+                    key={c.id}
+                    {...c}
+                    onView={() => handleOpenClinicDoctors(c)}
+                    onCall={() =>
+                      c.phone
+                        ? window.open(`tel:${c.phone}`, "_self")
+                        : console.log("Sem telefone para:", c)
+                    }
+                    onDirections={() =>
+                      console.log("Rotas para:", c.name, c.addressLine)
+                    }
+                  />
+                ))
+              )}
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Modal: Médicos da unidade + horários do médico */}
+      {clinicModalOpen && (
+        <div
+          className={s.modalOverlay}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Médicos e horários da unidade"
+          onClick={handleCloseClinicModal}
+        >
+          <div
+            className={s.modal}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <header className={s.modalHeader}>
+              <h2 className={typey.titleSm}>
+                {selectedClinic
+                  ? `Unidade: ${selectedClinic.name}`
+                  : "Unidade"}
+              </h2>
+            </header>
+
+            <div className={s.modalBody}>
+              {/* Estado 1: Lista de médicos da unidade */}
+              {!selectedDoctor && (
+                <>
+                  {clinicDoctorsLoading && (
+                    <p className={typey.bodyMd}>Carregando médicos…</p>
+                  )}
+
+                  {!clinicDoctorsLoading && clinicDoctorsError && (
+                    <p
+                      className={typey.bodyMd}
+                      style={{ color: "var(--color-danger)" }}
+                    >
+                      {clinicDoctorsError}
+                    </p>
+                  )}
+
+                  {!clinicDoctorsLoading &&
+                    !clinicDoctorsError &&
+                    clinicDoctors.length === 0 && (
+                      <p className={typey.bodyMd}>
+                        Nenhum médico cadastrado para esta unidade.
+                      </p>
+                    )}
+
+                  {!clinicDoctorsLoading &&
+                    !clinicDoctorsError &&
+                    clinicDoctors.length > 0 && (
+                      <ul className={s.doctorList}>
+                        {clinicDoctors.map((m) => (
+                          <li key={m.id_medico ?? m.id} className={s.doctorItem}>
+                            <div className={s.doctorInfo}>
+                              <strong>{m.nome}</strong>
+                              <span>{m.especialidade}</span>
+                              {m.crm && (
+                                <span className={s.doctorCrm}>
+                                  CRM {m.crm}
+                                </span>
+                              )}
+                            </div>
+                            <button
+                              type="button"
+                              className={`${btn.btn} ${btn.btnPrimary}`}
+                              onClick={() => handleOpenDoctorSlots(m)}
+                            >
+                              Ver horários
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                </>
+              )}
+
+              {/* Estado 2: Horários disponíveis do médico selecionado */}
+              {selectedDoctor && (
+                <div className="stack">
+                  <p className={typey.bodyMd}>
+                    Horários disponíveis –{" "}
+                    <strong>{selectedDoctor.nome}</strong>
+                    {selectedDoctor.especialidade
+                      ? ` (${selectedDoctor.especialidade})`
+                      : ""}
+                  </p>
+
+                  {bookingError && (
+                    <p
+                      className={typey.bodySm}
+                      style={{ color: "var(--color-danger)" }}
+                    >
+                      {bookingError}
+                    </p>
+                  )}
+
+                  {bookingSuccess && (
+                    <p
+                      className={typey.bodySm}
+                      style={{
+                        color: "var(--color-success, #15803d)",
+                      }}
+                    >
+                      {bookingSuccess}
+                    </p>
+                  )}
+
+                  {slotsLoading && (
+                    <p className={typey.bodyMd}>Carregando horários…</p>
+                  )}
+
+                  {!slotsLoading && slotsError && (
+                    <p
+                      className={typey.bodyMd}
+                      style={{ color: "var(--color-danger)" }}
+                    >
+                      {slotsError}
+                    </p>
+                  )}
+
+                  {!slotsLoading && !slotsError && slots.length === 0 && (
+                    <p className={typey.bodyMd}>
+                      Nenhum horário disponível para este médico.
+                    </p>
+                  )}
+
+                  {!slotsLoading && !slotsError && slots.length > 0 && (
+                    <div className={s.slotList}>
+                      {slots.map((slot) => (
+                        <button
+                          key={slot.id_calendario_medico}
+                          type="button"
+                          className={s.slotItem}
+                          onClick={() => handleSelectSlot(slot)}
+                          disabled={bookingLoading}
+                        >
+                          <span className={s.slotDate}>
+                            {formatSlotDate(slot)}
+                          </span>
+                          <span className={s.slotTime}>
+                            {formatSlotTimeRange(slot)}
+                          </span>
+                          {slot.unidade?.nome && (
+                            <span className={s.slotClinic}>
+                              {slot.unidade.nome}
+                            </span>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <footer className={s.modalFooter}>
+              {selectedDoctor && (
+                <button
+                  type="button"
+                  className={`${btn.btn} ${btn.btnGhost}`}
+                  onClick={handleBackToDoctors}
+                  disabled={bookingLoading}
+                >
+                  Voltar para médicos
+                </button>
+              )}
               <button
                 type="button"
-                className={`${btn.btn} ${btn.btnGhost || ""}`}
-                onClick={() => {
-                  setQuery("");
-                  setSubmittedQuery("");
-                  setNearMe(false);
-                  setTele(false);
-                  setAcess(false);
-                  setPark(false);
-                  setOpenNow(false);
-                }}
+                className={`${btn.btn} ${btn.btnPrimary}`}
+                onClick={handleCloseClinicModal}
+                disabled={bookingLoading}
               >
-                Limpar filtros
+                Fechar
               </button>
-            </div>
-          ) : (
-            filtered.map((c) => (
-              <ClinicCard
-                key={c.id}
-                {...c}
-                onView={() => console.log("Ver detalhes:", c.id)}
-                onCall={() => console.log("Ligar:", c.phone)}
-                onDirections={() => console.log("Rotas para:", c.name)}
-              />
-            ))
-          )}
+            </footer>
+          </div>
         </div>
-      </div>
+      )}
     </main>
   );
 }

@@ -1,0 +1,317 @@
+/* src/pages/ClinicsMyUnitPage/clinics-my-unit.module.css */
+
+.page {
+  min-height: 100vh;
+  /* leve profundidade no fundo */
+  background:
+    radial-gradient(circle at top left, rgba(0, 0, 0, 0.03), transparent 55%),
+    var(--staff-bg);
+  color: var(--staff-text);
+  padding-bottom: var(--space-8);
+}
+
+.pageInner {
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.subtitle {
+  margin-top: .25rem;
+  color: var(--staff-muted);
+}
+
+.userInfo {
+  margin-top: .25rem;
+  font-size: .9rem;
+  color: var(--staff-muted);
+}
+
+.infoText {
+  color: var(--staff-muted);
+  font-size: .95rem;
+  padding: .5rem 0;
+}
+
+/* Unidade */
+.unitSection {
+  margin-top: var(--space-1);
+}
+
+.unitCard {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--staff-card-border);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-4);
+  position: relative;
+  overflow: hidden;
+}
+
+.unitCard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(135deg, rgba(0, 0, 0, 0.05), transparent);
+  opacity: 0;
+  transition: opacity var(--ts) var(--ease);
+}
+
+.unitCard:hover::before {
+  opacity: 1;
+}
+
+.unitHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.unitIcon {
+  margin-right: .25rem;
+}
+
+.unitBody {
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
+}
+
+.unitName {
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.unitAddress {
+  color: var(--staff-muted);
+  font-size: .95rem;
+}
+
+.unitActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+/* Médicos */
+.doctorsSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.doctorsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.doctorsTitle {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+.doctorsIcon {
+  font-size: 1.25rem;
+  color: white;
+}
+
+.doctorsList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-3);
+}
+
+.doctorCard {
+  background: #fff;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--staff-border);
+  padding: var(--space-3);
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  box-shadow: var(--shadow-sm);
+  transition:
+    box-shadow var(--ts) var(--ease),
+    transform var(--ts) var(--ease),
+    border-color var(--ts) var(--ease),
+    background-color var(--ts) var(--ease);
+}
+
+.doctorCard:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  border-color: var(--staff-primary);
+  background: var(--staff-card-bg-hover);
+}
+
+.doctorInfo {
+  flex: 1;
+}
+
+.doctorName {
+  font-weight: 600;
+}
+
+.doctorMeta {
+  margin-top: .25rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+  font-size: .9rem;
+  color: var(--staff-muted);
+}
+
+.doctorMeta span strong {
+  font-weight: 600;
+}
+
+.doctorContact {
+  margin-top: .25rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+  font-size: .85rem;
+  color: var(--staff-muted);
+}
+
+.doctorActions {
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
+}
+
+/* Botão de ícone “ghost” */
+.iconBtn {
+  padding: .35rem;
+  min-width: 0;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconBtn svg {
+  font-size: 1.1rem;
+}
+
+.iconBtn:focus-visible {
+  outline: 2px solid var(--staff-primary);
+  outline-offset: 2px;
+}
+
+.deleteBtn {
+  color: var(--color-danger);
+}
+
+/* Editor de médico */
+.doctorEditor {
+  margin-top: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--staff-primary);
+  background: var(--staff-card-bg);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+}
+
+.doctorEditor::before {
+  content: 'Edição de médico';
+  position: absolute;
+  top: .75rem;
+  right: .75rem;
+  font-size: .75rem;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--staff-muted);
+}
+
+.doctorEditor h3 {
+  margin-bottom: var(--space-2);
+}
+
+.doctorEditor form {
+  row-gap: var(--space-2);
+  column-gap: var(--space-2);
+}
+
+.fieldSm {
+  flex: 1 1 170px;
+  min-width: 0;
+}
+
+.fieldMd {
+  flex: 1 1 230px;
+  min-width: 0;
+}
+
+.doctorEditorActions {
+  margin-top: var(--space-3);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+.btnMed {
+    background-color: var(--staff-primary);
+}
+
+.btnMed:hover {
+    background-color: var(--staff-primary-hover) !important;
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+  }
+
+  .unitHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .doctorsHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .doctorCard {
+    flex-direction: column;
+  }
+
+  .doctorActions {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  .doctorEditor::before {
+    position: static;
+    display: block;
+    margin-bottom: .25rem;
+  }
+}

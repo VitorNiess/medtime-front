@@ -1,5 +1,116 @@
 .page { 
-    background: var(--color-bg);
-    color: var(--color-text);
-    padding-bottom: var(--space-10);
+  background: var(--color-bg);
+  color: var(--color-text);
+  padding-bottom: var(--space-10);
+}
+
+/* ===========================
+   Modal de horários
+   =========================== */
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45); /* overlay escuro */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 40;
+}
+
+.modal {
+  background: #fff;
+  color: var(--color-text);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  max-width: 560px;
+  width: calc(100% - 2rem);
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modalHeader {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--staff-border, #e2e8f0);
+}
+
+.modalBody {
+  padding: var(--space-3) var(--space-4);
+  overflow-y: auto;
+}
+
+.modalFooter {
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--staff-border, #e2e8f0);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+/* ===========================
+   Lista de horários
+   =========================== */
+
+.slotList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.slotItem {
+  width: 100%;
+  text-align: left;
+  padding: 0.55rem 0.8rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--staff-border, #e2e8f0);
+  background: #fff;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  transition:
+    background-color var(--ts, 150ms) var(--ease, ease-out),
+    border-color var(--ts, 150ms) var(--ease, ease-out),
+    box-shadow var(--ts, 150ms) var(--ease, ease-out),
+    transform var(--ts, 150ms) var(--ease, ease-out);
+}
+
+.slotItem:hover {
+  background: var(--staff-card-bg-hover, #f8fafc);
+  border-color: var(--staff-primary, #2563eb);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.slotDate {
+  font-size: 0.8rem;
+  color: var(--staff-muted, #64748b);
+  text-transform: capitalize;
+}
+
+.slotTime {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.slotClinic {
+  font-size: 0.8rem;
+  color: var(--staff-muted, #64748b);
+}
+
+/* Mobile: modal ocupa quase a tela toda */
+@media (max-width: 640px) {
+  .modal {
+    max-width: 100%;
+    width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .modalBody {
+    padding-inline: var(--space-3);
+  }
 }

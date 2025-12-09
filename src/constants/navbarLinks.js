@@ -33,11 +33,6 @@ const navItems = [
     path: "/unidades",
     icon: <PiBuildingsBold />,
   },
-  {
-    id: 'ajuda',
-    path: '/ajuda',
-    label: 'Ajuda',
-    icon: <PiQuestionBold /> },
 ];
 
 export default navItems;

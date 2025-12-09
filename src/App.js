@@ -14,6 +14,7 @@ import Home from './pages/Home/Home';
 import PatientHome from './pages/PatientHome/PatientHome';
 import ClinicsSearchPage from './pages/ClinicsSearchPage/ClinicsSearchPage';
 import DoctorsSearchPage from './pages/DoctorsSearchPage/DoctorsSearchPage';
+import ClinicsMyUnitPage from './pages/ClinicsMyUnitPage/ClinicsMyUnitPage';
 
 import HomeClinics from './pages/HomeClinics/HomeClinics';
 
@@ -60,6 +61,8 @@ function App() {
               <Route path="/agenda" element={<PatientHome />} />
               <Route path="/unidades" element={<ClinicsSearchPage />} />
               <Route path="/medicos" element={<DoctorsSearchPage />} />
+
+              <Route path="/clinics/unidades" element={<ClinicsMyUnitPage />} />
 
               <Route path="/adm/users" element={<AdminUsersPage />} />
 

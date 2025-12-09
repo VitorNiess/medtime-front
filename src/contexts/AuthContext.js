@@ -14,6 +14,7 @@ export function AuthProvider({ children }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
 
+  // Restaura sessão do storage (local ou session)
   useEffect(() => {
     try {
       const rawLocal = localStorage.getItem(STORAGE_KEY);
@@ -23,7 +24,11 @@ export function AuthProvider({ children }) {
         const parsed = JSON.parse(raw);
         setUser(parsed.user || null);
         setToken(parsed.token || null);
-        console.log('[Auth] sessão restaurada do storage:', parsed, rawLocal ? '(local)' : '(session)');
+        console.log(
+          '[Auth] sessão restaurada do storage:',
+          parsed,
+          rawLocal ? '(local)' : '(session)'
+        );
       }
     } catch (e) {
       console.warn('[Auth] erro ao ler sessão do storage:', e);
@@ -64,13 +69,20 @@ export function AuthProvider({ children }) {
     clearSessionStorages();
   }, []);
 
-  /* Login */
+  /* Login (paciente ou funcionário, apenas a rota muda via mode) */
   const login = useCallback(
-    async ({ login, cpf, senha, remember = true }) => {
+    async ({ login, cpf, senha, remember = true, mode = 'paciente' }) => {
+      // mode: 'paciente' | 'funcionario'
       setBusy(true);
       setError(null);
       try {
-        const res = await apiLogin({ login: login ?? cpf, cpf, senha, remember });
+        const res = await apiLogin({
+          login: login ?? cpf,
+          cpf,
+          senha,
+          remember,
+          mode,
+        });
 
         if (!res?.success) {
           const message = res?.error || 'Falha ao entrar. Verifique CPF e senha.';
@@ -92,22 +104,37 @@ export function AuthProvider({ children }) {
     [saveSession]
   );
 
-  /* Signup */
+  /* Signup (paciente ou funcionário, comportamento igual; só muda a rota via mode) */
   const signup = useCallback(
     async (payload, remember = true) => {
       setBusy(true);
       setError(null);
       try {
-        const res = await apiSignup(payload);
+        const mode = payload?.mode ?? 'paciente'; // 'paciente' | 'funcionario'
+
+        // Chama API real de cadastro (mesmo payload base p/ ambos; rota muda no service)
+        const res = await apiSignup({
+          ...payload,
+          mode,
+        });
+
+        if (!res?.success) {
+          const message = res?.error || 'Falha ao cadastrar. Tente novamente.';
+          setError(message);
+          return { ok: false, error: message };
+        }
 
         const loginCpf = payload?.cpf ?? payload?.login;
         const loginSenha = payload?.senha;
 
+        // Mesmo comportamento para paciente e funcionário:
+        // tenta login automático logo após cadastrar, usando o mesmo mode
         if (loginCpf && loginSenha) {
           const loginRes = await apiLogin({
             cpf: loginCpf,
             senha: loginSenha,
             remember,
+            mode,
           });
 
           if (loginRes?.success && loginRes?.user && loginRes?.token) {
@@ -116,12 +143,16 @@ export function AuthProvider({ children }) {
           }
         }
 
+        // Fallback: se o próprio cadastro retornou user/token (hoje token == null)
         if (res?.user && res?.token) {
           saveSession({ user: res.user, token: res.token }, remember);
           return { ok: true, user: res.user };
         }
 
-        const message = 'Falha ao cadastrar. Tente novamente.';
+        // Se chegou aqui, cadastro foi feito (success), mas não autenticamos
+        const message =
+          'Cadastro realizado, mas não foi possível autenticar automaticamente.';
+        console.warn('[Auth] signup sem login automático bem-sucedido.');
         setError(message);
         return { ok: false, error: message };
       } catch (e) {

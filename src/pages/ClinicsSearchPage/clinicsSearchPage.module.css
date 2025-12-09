@@ -1,5 +1,196 @@
 .page { 
-    background: var(--color-bg);
-    color: var(--color-text);
-    padding-bottom: var(--space-10);
+  background: var(--color-bg);
+  color: var(--color-text);
+  padding-bottom: var(--space-10);
+}
+
+/* ===== MODAL GENÉRICO ===== */
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;              /* <<< bem acima do header */
+  background: rgba(7, 10, 20, 0.65);
+  display: flex;
+  align-items: center;         /* centraliza verticalmente */
+  justify-content: center;
+  padding: var(--space-6) var(--space-4);
+  overflow-y: auto;
+}
+
+.modal {
+  width: 100%;
+  max-width: 640px;
+  background: var(--surface-elevated, #fff);
+  color: var(--color-text);
+  border-radius: var(--radius-xl, 1.25rem);
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.25);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  animation: modalFadeUp 0.18s ease-out;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.modalBody {
+  padding-top: var(--space-2);
+  padding-bottom: var(--space-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.modalFooter {
+  padding-top: var(--space-3);
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+/* ===== LISTA DE MÉDICOS DA UNIDADE ===== */
+
+.doctorList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.doctorItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow-xs);
+  transition:
+    box-shadow var(--ts) var(--ease),
+    transform var(--ts) var(--ease),
+    border-color var(--ts) var(--ease),
+    background-color var(--ts) var(--ease);
+}
+
+.doctorItem:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+  border-color: var(--color-primary, var(--staff-primary, #2563eb));
+  background: var(--surface-subtle, #f8fafc);
+}
+
+.doctorInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: 0.9rem;
+}
+
+.doctorInfo strong {
+  font-size: 0.95rem;
+}
+
+.doctorCrm {
+  font-size: 0.8rem;
+  color: var(--muted-fg, #6b7280);
+}
+
+/* ===== LISTA DE HORÁRIOS DISPONÍVEIS ===== */
+
+.slotList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-2);
+}
+
+.slotItem {
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  padding: var(--space-2) var(--space-3);
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  text-align: left;
+  box-shadow: var(--shadow-xs);
+  cursor: pointer;
+  transition:
+    border-color var(--ts) var(--ease),
+    box-shadow var(--ts) var(--ease),
+    transform var(--ts) var(--ease),
+    background-color var(--ts) var(--ease);
+}
+
+.slotItem:hover {
+  border-color: var(--color-primary, var(--staff-primary, #2563eb));
+  box-shadow: var(--shadow-sm);
+  background: var(--surface-subtle, #f8fafc);
+  transform: translateY(-1px);
+}
+
+.slotDate {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted-fg, #6b7280);
+}
+
+.slotTime {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.slotClinic {
+  font-size: 0.8rem;
+  color: var(--muted-fg, #6b7280);
+}
+
+/* ===== RESPONSIVO ===== */
+
+@media (max-width: 640px) {
+  .modal {
+    padding: var(--space-3);
+    border-radius: var(--radius-lg);
+  }
+
+  .doctorItem {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .modalFooter {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .modalFooter > button {
+    width: 100%;
+  }
+}
+
+/* ===== ANIMAÇÃO ===== */
+
+@keyframes modalFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
